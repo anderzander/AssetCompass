@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andi's First Webpage</title>
+    <link rel="stylesheet" href="stylesheets/index.css">
+</head>
+
+<body>
+<div class="overlay" id="overlay">
+    <img src="assets/images/AssetCompass.jpg" alt="Foreground Image" id="foreground-image">
+</div>
+
+<header>
+    <h1>AssetCompass</h1>
+</header>
+<main>
+    <div class="container">
+        <div class="box">
+            <h2>Box 1</h2>
+            <p>Content for Box 1 goes here.</p>
+        </div>
+        <div class="box">
+            <h2>Box 2</h2>
+            <p>Content for Box 2 goes here.</p>
+        </div>
+        <div class="box">
+            <h2>Box 3</h2>
+            <p>Content for Box 3 goes here.</p>
+        </div>
+        <div class="box">
+            <h2>Box 4</h2>
+            <p>Content for Box 4 goes here.</p>
+        </div>
+        <div class="box">
+            <h2>Box 5</h2>
+            <p>Content for Box 5 goes here.</p>
+        </div>
+        <div class="box">
+            <h2>Box 6</h2>
+            <p>Content for Box 6 goes here.</p>
+        </div>
+        <div class="box">
+            <h2>Box 7</h2>
+            <p>Content for Box 7 goes here.</p>
+        </div>
+        <div class="box">
+            <h2>Box 8</h2>
+            <p>Content for Box 8 goes here.</p>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    document.getElementById('foreground-image').addEventListener('click', function() {
+        document.getElementById('overlay').style.display = 'none';
+    });
+</script>
+</body>
+
+</html>
