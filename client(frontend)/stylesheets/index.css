@@ -34,6 +34,11 @@ header {
     z-index: 1000;
 }
 
+.main-content {
+    flex: 1; /* Ensures the main content takes up available space */
+    overflow-y: auto; /* Falls der Inhalt scrollbar ist */
+}
+
 header img {
     height: 8vh;
     width: auto;
@@ -73,9 +78,10 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10vh 20px 20px;
-    overflow-y: auto; /* Falls der Inhalt scrollbar ist */
+    padding: 0 20px 20px;
+    overflow-y: auto;
 }
+
 
 .container {
     display: flex;
