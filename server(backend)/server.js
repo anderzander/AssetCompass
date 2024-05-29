@@ -1,64 +1,21 @@
-const http = require('http');
-const fs = require('fs');
+const express = require('express');
 const path = require('path');
+const bodyParser = require('body-parser');
+const {all} = require("express/lib/application");
+const app = express();
 
-const hostname = '127.0.0.1';
-const port = 3000;
+// Parse urlencoded bodies
+app.use(bodyParser.json());
 
-// Funktion zum Senden von 404-Fehlern
-const send404 = (res) => {
-    res.statusCode = 404;
-    res.end('Not Found');
-};
+// Serve static content in directory 'client(frontend)'
+const staticFilesPath = path.join(__dirname, '..', 'client(frontend)');
+app.use(express.static(staticFilesPath));
 
-// Funktion zum Senden von 500-Fehlern
-const send500 = (res, err) => {
-    res.statusCode = 500;
-    res.end('Internal Server Error');
-    console.log(err);
-};
+// Serve index.html when root route is accessed
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(staticFilesPath, 'index.html'));
+// });
 
-const server = http.createServer((req, res) => {
-    const reqPath = req.url === '/' ? '/index.html' : req.url;
-
-    const extname = String(path.extname(reqPath)).toLowerCase();
-    const mimeTypes = {
-        '.html': 'text/html',
-        '.js': 'text/javascript',
-        '.css': 'text/css',
-        '.json': 'application/json',
-        '.png': 'image/png',
-        '.jpg': 'image/jpg',
-        '.gif': 'image/gif',
-        '.svg': 'image/svg+xml',
-        '.wav': 'audio/wav',
-        '.mp4': 'video/mp4',
-        '.woff': 'application/font-woff',
-        '.ttf': 'application/font-ttf',
-        '.eot': 'application/vnd.ms-fontobject',
-        '.otf': 'application/font-otf',
-        '.wasm': 'application/wasm'
-    };
-
-    const contentType = mimeTypes[extname] || 'application/octet-stream';
-    const filePath = path.join(__dirname, '..', 'client(frontend)', reqPath);
-
-    fs.readFile(filePath, (err, data) => {
-        if (err) {
-            if (err.code === 'ENOENT') {
-                send404(res);
-            } else {
-                send500(res, err);
-            }
-        } else {
-            res.statusCode = 200;
-            res.setHeader('Content-Type', contentType);
-            res.end(data, 'utf-8');
-        }
-    });
+app.listen(3000, () => {
+    console.log("Server now listening on http://localhost:3000/");
 });
-
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
-
