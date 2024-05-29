@@ -14,13 +14,13 @@
 </div>
 </header>
 <div class="login-container">
-    <main>
-<div class = "container">
+
+
     <div class="form-box">
-    <h2>Sign Up</h2>
+    <h2 id="title">Sign Up</h2>
         <form>
             <div class="input-group">
-                <div class="input-field">
+                <div class="input-field" id="nameField">
                     <i class="fa-solid fa-user"></i>
                     <label>
                         <input type="text" placeholder="Name">
@@ -29,21 +29,24 @@
                 <div class="input-field">
                     <i class="fa-solid fa-envelope"></i>
                     <label>
-                        <input type="email" placeholder="Email">
+                        <input type="email" id="email" placeholder="Email" name="email" required>
                     </label>
                 </div>
                 <div class="input-field">
                     <i class="fa-solid fa-lock"></i>
                     <label>
-                        <input type="password" placeholder="Password">
+                        <input type="password" id="password" placeholder="Password" name="password" required>
                     </label>
                 </div>
+            </div>
+            <div class="btn-field">
+                <button type="button" id="signupBtn">sign up</button>
+                <button type="button" id="signinBtn" class="disable">sign in</button>
             </div>
         </form>
 
 </div>
 </div>
-    </main>
-</div>
+<script src="js/login.js"></script>
 </body>
 </html>
