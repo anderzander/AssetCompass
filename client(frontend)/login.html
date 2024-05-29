@@ -14,11 +14,9 @@
 </div>
 </header>
 <div class="login-container">
-
-
     <div class="form-box">
     <h2 id="title">Sign Up</h2>
-        <form>
+        <form action="register.php" method="post">
             <div class="input-group">
                 <div class="input-field" id="nameField">
                     <i class="fa-solid fa-user"></i>
@@ -38,13 +36,19 @@
                         <input type="password" id="password" placeholder="Password" name="password" required>
                     </label>
                 </div>
+                <div class="input-field" id="confirmPasswordField">
+                    <i class="fa-solid fa-lock"></i>
+                    <label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                    </label>
+                </div>
             </div>
             <div class="btn-field">
                 <button type="button" id="signupBtn">sign up</button>
                 <button type="button" id="signinBtn" class="disable">sign in</button>
             </div>
-        </form>
 
+        </form>
 </div>
 </div>
 <script src="js/login.js"></script>
