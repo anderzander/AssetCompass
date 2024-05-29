@@ -7,10 +7,7 @@ html, body {
 }
 
 body {
-    background-image: linear-gradient(to bottom, #F8B195, #F67280, #C06C84, #6C5B7B, #355C7D);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed; /* Hintergrundposition auf fixed setzen */
+    background: linear-gradient(to bottom, #F8B195, #F67280, #C06C84, #6C5B7B, #355C7D);
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -24,19 +21,13 @@ header {
     top: 0;
     width: 100%;
     background-color: #f2f2f2;
-    border-bottom: 0.2vh solid #000;
-    height: 10vh;
+    border-bottom: 2px solid #000;
+    height: 150px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding:0 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-}
-
-.main-content {
-    flex: 1; /* Ensures the main content takes up available space */
-    overflow-y: auto; /* Falls der Inhalt scrollbar ist */
 }
 .header-content {
     display: flex;
@@ -46,7 +37,7 @@ header {
 }
 
 header h1 {
-    font-size: 5vw;
+    font-size: 2.5em;
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -54,51 +45,25 @@ header h1 {
     margin: 0;
 }
 
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.overlay img {
-    max-width: 90%;
-    max-height: 90%;
-    cursor: pointer;
-}
 
 main {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0 20px 20px;
-    overflow-y: auto;
-}
-
-.container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
     padding: 20px;
-    justify-content: center;
 }
 
 
 
 .box {
-    width: 300px; /* Festlegen der Breite der Boxen */
-    height: 300px; /* Festlegen der Höhe der Boxen */
-    margin: 10px;
+    width: 250px; /* Ändere die Breite nach deinen Wünschen */
+    height: 200px; /* Ändere die Höhe nach deinen Wünschen */
     background-color: #fff;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
     flex-direction: column;
 }
 
@@ -116,12 +81,6 @@ main {
     margin: 0;
 }
 
-@media screen and (max-width: 800px) {
-    .container {
-        justify-content: center; /* Zentriert die Boxen */
-    }
-}
-
 button{
     padding: 10px 20px;
     font-size: 16px;
@@ -130,4 +89,33 @@ button{
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+.form-box{
+    width: 90%;
+    max-width: 450px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: white;
+    padding: 50px 60px 70px;
+    text-align: center;
+}
+.form-box h2{
+    font-size: 30px;
+    margin-bottom: 60px;
+    color: #3c00a0;
+    position: relative;
+}
+.form-box h2::after{
+    content: '';
+    width: 30px;
+    height: 4px;
+    border-radius:3px;
+    background: #3c00a0;
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+
 }
