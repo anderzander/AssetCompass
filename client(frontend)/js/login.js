@@ -1,13 +1,25 @@
 
-document.addEventListener("DOMContentLoaded", function() {
-    const form = document.querySelector("form");
-    form.addEventListener("submit", function(event) {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
 
-        if (!username || !password) {
-            event.preventDefault();
-            alert("Bitte geben Sie sowohl Benutzernamen als auch Passwort ein.");
-        }
-    });
-});
+let signupBtn = document.getElementById("signupBtn");
+let signinBtn = document.getElementById("signinBtn");
+let nameField = document.getElementById("nameField");
+let title = document.getElementById("title");
+let confirmPasswordField = document.getElementById('confirmPasswordField');
+
+
+signinBtn.onclick = function (){
+    nameField.style.maxHeight = "0";
+    title.innerHTML = "Sign In";
+    signupBtn.classList.add("disable");
+    signinBtn.classList.remove("disable");
+    confirmPasswordField.style.maxHeight= "0";
+}
+signupBtn.onclick = function (){
+    nameField.style.maxHeight = "60px";
+    title.innerHTML = "Sign Up";
+    signupBtn.classList.remove("disable");
+    signinBtn.classList.add("disable");
+    confirmPasswordField.style.maxHeight = "60px";
+}
+
+
