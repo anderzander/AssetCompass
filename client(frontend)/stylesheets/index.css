@@ -21,8 +21,8 @@ header {
     top: 0;
     width: 100%;
     background-color: #f2f2f2;
-    border-bottom: 2px solid #000;
-    height: 150px;
+    border-bottom: 0.2vh solid #000;
+    height: 10vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,13 +31,13 @@ header {
 }
 
 header img {
-    height: 100px;
+    height: 8vh;
     width: auto;
     margin-right: 20px;
 }
 
 header h1 {
-    font-size: 2.5em;
+    font-size: 5vw;
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -73,20 +73,21 @@ main {
 }
 
 .container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Create 4 equal-width columns */
-    gap: 20px; /* Add gap between the boxes */
-    padding: 20px; /* Add padding to the container */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    justify-content: center;
 }
 
+
 .box {
-    width: 250px; /* Ändere die Breite nach deinen Wünschen */
-    height: 200px; /* Ändere die Höhe nach deinen Wünschen */
+    width: 300px; /* Festlegen der Breite der Boxen */
+    height: 300px; /* Festlegen der Höhe der Boxen */
+    margin: 10px;
     background-color: #fff;
-    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    display: flex;
     flex-direction: column;
 }
 
@@ -102,4 +103,10 @@ main {
 .box p {
     font-size: 1em;
     margin: 0;
+}
+
+@media screen and (max-width: 800px) {
+    .container {
+        justify-content: center; /* Zentriert die Boxen */
+    }
 }
