@@ -131,3 +131,10 @@ button{
     border-radius: 5px;
     cursor: pointer;
 }
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}

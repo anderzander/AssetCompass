@@ -30,12 +30,16 @@
                 <p id="box-1-content">Content for Box 1 goes here.</p>
             </div>
             <div class="box">
-                <h2>Box 2</h2>
-                <p>Content for Box 2 goes here.</p>
+                <h2>Converter</h2>
+                <form id="converterForm">
+                    <input type="text" id="converterBTC" autocomplete="off" value="1" />BTC
+                    <p id="output"></p>
+                </form>
+
             </div>
             <div class="box">
                 <h2>Box 3</h2>
-                <p>Content for Box 3 goes here.</p>
+                <img src="https://c.tenor.com/9JO3m3Tyj4kAAAAC/tenor.gif" class="center"/>
             </div>
             <div class="box">
                 <h2>Box 4</h2>
@@ -60,11 +64,7 @@
         </div>
     </main>
 </div>
-<script src="js/index.js"></script>
-<script>
-    document.getElementById('foreground-image').addEventListener('click', function () {
-        document.getElementById('overlay').style.display = 'none';
-    });
+<script src="js/index.js">
 </script>
 </body>
 
