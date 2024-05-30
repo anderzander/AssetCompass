@@ -4,8 +4,22 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             const boxTitle = document.getElementById('box-1-title');
             const boxContent = document.getElementById('box-1-content');
+
+            // Update Title
+            boxTitle.textContent = 'BNB Prices';
+
+            // Update Content
+            boxContent.innerHTML = `
+                <p>USD: ${data.USD}</p>
+                <p>JPY: ${data.JPY}</p>
+                <p>EUR: ${data.EUR}</p>
+            `;
+        })
+        .catch(error => console.error('Error fetching data:', error));
+});
+
 window.onload = function (){
-convert()
+    convert()
 }
 
 function convert(){
@@ -25,8 +39,6 @@ function convert(){
 
     const url = new URL("/currency", location.href)
 
-            // Update Title
-            boxTitle.textContent = 'BNB Prices';
     xhr.open("GET", url)
     xhr.send()
 }
@@ -40,16 +52,4 @@ document.getElementById('converterBTC').addEventListener('keypress', function(ev
 
 document.getElementById('converterBTC').addEventListener('input', function(event) {
     convert();
-});
-
-
-
-            // Update Content
-            boxContent.innerHTML = `
-                <p>USD: ${data.USD}</p>
-                <p>JPY: ${data.JPY}</p>
-                <p>EUR: ${data.EUR}</p>
-            `;
-        })
-        .catch(error => console.error('Error fetching data:', error));
 });
