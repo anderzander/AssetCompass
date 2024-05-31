@@ -4,22 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Andi's First Webpage</title>
+    <title>AssetCompass</title>
     <link rel="stylesheet" href="stylesheets/index.css">
 </head>
 
 <body>
-<!--
-<div class="overlay" id="overlay">
-    <img src="assets/images/AssetCompass.jpg" alt="Foreground Image" id="foreground-image">
-</div> -->
-
 <header>
     <div class="header-content">
     <h1>AssetCompass</h1>
     </div>
     <div class="login-button-container">
-        <button onclick="location.href='login.html'">Login</button>
+        <button class="loginButton" onclick="location.href='login.html'">Login</button>
     </div>
 </header>
 <div class="main-content">
@@ -37,12 +32,12 @@
                 </form>
             </div>
             <div class="addBox" id="addBox">
-                <img src="assets/images/add.png" width="50" height="50" class="add_symbol_image">
+                <img src="assets/images/add.png" class="add_symbol_image" id="addBoxSymbol">
             </div>
         </div>
     </main>
 </div>
-<script src="js/index.js">
+<script type="module" src="js/index.js">
 </script>
 </body>
 

@@ -1,7 +1,7 @@
+import {ElementBuilder, ParentChildBuilder} from './builders.js';
 
-
-function convert(){
-    fetch('http://localhost:3000/currency')
+function convert() {
+    fetch('/currency')
         .then(response => response.json())
         .then(data => {
             var amount = document.getElementById('converterBTC').value;
@@ -11,7 +11,6 @@ function convert(){
         })
         .catch(error => console.error('Error fetching data:', error));
 }
-
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -35,39 +34,36 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+
 // Trigger convert button click on Enter key press in the input field
-document.getElementById('converterBTC').addEventListener('keypress', function(event) {
+document.getElementById('converterBTC').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
         event.preventDefault(); // Prevent form submission
     }
 });
-
-document.getElementById('converterBTC').addEventListener('input', function(event) {
+document.getElementById('converterBTC').addEventListener('input',  () => {
     convert();
 });
+document.addEventListener('DOMContentLoaded', () => { convert()});
+
 
 //add a new Box
-document.getElementById('addBox').addEventListener('click', function (){
+function buildBox() {
     var newBox = document.createElement('div');
     newBox.className = 'box';
+    new ElementBuilder("img")
+        .with("src", "assets/images/X_Symbol.png")
+        .class("removeSymbol")
+        .listener("click", () => newBox.remove())
+        .appendTo(newBox);
 
-    var newBoxTitle = document.createElement('h2');
-    newBoxTitle.textContent = 'New Box';
-    newBox.appendChild(newBoxTitle);
-
-    var removeButton = document.createElement('button');
-    removeButton.textContent = 'REMOVE'
-    removeButton.addEventListener('click', function (){
-        newBox.remove();
-    })
-    newBox.appendChild(removeButton);
-
-    var newBoxContent = document.createElement('p');
-    newBoxContent.textContent = 'Content for the new box goes here.';
-    newBox.appendChild(newBoxContent);
-
+    return newBox
+}
+document.getElementById('addBoxSymbol').addEventListener('click', function () {
     var container = document.querySelector('.container');
     var addBox = document.getElementById('addBox');
 
-    container.insertBefore(newBox, addBox);
+    container.insertBefore(buildBox(), addBox);
 })
+
+
