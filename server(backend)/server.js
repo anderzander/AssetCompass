@@ -18,6 +18,7 @@ app.use(express.static(staticFilesPath));
 
 app.get('/currency', function (req, res) {
     getBitcoinValue();
+    console.log("send Api Data do client" + bitcoinValue)
     res.send(bitcoinValue);
 })
 
@@ -36,7 +37,7 @@ function getBitcoinValue(){
         })
         .then(data => {
             // Handle the data from the response
-            console.log(data); // For example, log it to the console
+            console.log("got data from AP!" + data); // For example, log it to the console
             bitcoinValue = data;
         })
         .catch(error => {

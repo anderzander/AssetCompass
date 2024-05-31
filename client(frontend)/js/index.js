@@ -1,3 +1,19 @@
+
+
+function convert(){
+    fetch('http://localhost:3000/currency')
+        .then(response => response.json())
+        .then(data => {
+            var amount = document.getElementById('converterBTC').value;
+            var convertedValue = document.getElementById('output')
+            var bitcoinValue = data;
+            convertedValue.innerText = (bitcoinValue.EUR * amount).toFixed(2) + " €";
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD,JPY,EUR&api_key=db34a3799a2813ae847aa1145cdd903b1b7fc3aec63c1c1a1eec59435ca95c4c')
         .then(response => response.json())
@@ -18,30 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => console.error('Error fetching data:', error));
 });
 
-window.onload = function (){
-    convert()
-}
-
-function convert(){
-    const xhr = new XMLHttpRequest();
-
-    xhr.onload = function (){
-        if (xhr.status === 200) {
-            var amount = document.getElementById('converterBTC').value;
-            var convertedValue = document.getElementById('output')
-            var bitcoinValue = JSON.parse(xhr.responseText)
-            convertedValue.innerText = (bitcoinValue.EUR * amount).toFixed(2) + " €";
-        } else {
-            const error = 'Error in loadCurrency()'
-            return error;
-        }
-    }
-
-    const url = new URL("/currency", location.href)
-
-    xhr.open("GET", url)
-    xhr.send()
-}
 
 // Trigger convert button click on Enter key press in the input field
 document.getElementById('converterBTC').addEventListener('keypress', function(event) {
@@ -53,3 +45,29 @@ document.getElementById('converterBTC').addEventListener('keypress', function(ev
 document.getElementById('converterBTC').addEventListener('input', function(event) {
     convert();
 });
+
+//add a new Box
+document.getElementById('addBox').addEventListener('click', function (){
+    var newBox = document.createElement('div');
+    newBox.className = 'box';
+
+    var newBoxTitle = document.createElement('h2');
+    newBoxTitle.textContent = 'New Box';
+    newBox.appendChild(newBoxTitle);
+
+    var removeButton = document.createElement('button');
+    removeButton.textContent = 'REMOVE'
+    removeButton.addEventListener('click', function (){
+        newBox.remove();
+    })
+    newBox.appendChild(removeButton);
+
+    var newBoxContent = document.createElement('p');
+    newBoxContent.textContent = 'Content for the new box goes here.';
+    newBox.appendChild(newBoxContent);
+
+    var container = document.querySelector('.container');
+    var addBox = document.getElementById('addBox');
+
+    container.insertBefore(newBox, addBox);
+})

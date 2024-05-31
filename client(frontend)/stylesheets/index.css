@@ -29,9 +29,10 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding:0 20px;
+    padding:10px 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     z-index: 1000;
+    box-sizing: border-box;
 }
 
 .main-content {
@@ -80,6 +81,7 @@ main {
     align-items: center;
     padding: 0 20px 20px;
     overflow-y: auto;
+
 }
 
 .container {
@@ -95,11 +97,25 @@ main {
 .box {
     width: 300px; /* Festlegen der Breite der Boxen */
     height: 300px; /* Festlegen der Höhe der Boxen */
-    margin: 10px;
+    margin: 0px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     flex-direction: column;
+}
+
+.addBox {
+    width: 300px; /* Festlegen der Breite der Boxen */
+    height: 300px; /* Festlegen der Höhe der Boxen */
+    margin: 10px;
+    background-color: rgba(255, 255, 255, 0);
+    border-radius: 10px;
+    flex-direction: column;
+}
+
+.add_symbol_image:hover{
+    width: 55px;
+    height: 55px;
 }
 
 .box:hover {
