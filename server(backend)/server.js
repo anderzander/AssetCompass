@@ -26,6 +26,13 @@ app.get('/currency', function (req, res) {
     res.send(currentAssetValue);
 })
 
+app.delete('/asset/:id', (req,res) =>{
+    const resourceId = req.params.id;
+    console.log(resourceId);
+    delete assetsInUse[resourceId];
+    res.status(200).json({ message: 'Resource deleted successfully' });
+})
+
 
 function getCryptoValue(id) {
     const url = `https://min-api.cryptocompare.com/data/price?fsym=${id}&tsyms=EUR&api_key=db34a3799a2813ae847aa1145cdd903b1b7fc3aec63c1c1a1eec59435ca95c4c`;

@@ -1,17 +1,5 @@
 import {ElementBuilder, ParentChildBuilder} from './builders.js';
 
-// function convert() {
-//     fetch('/currency')
-//         .then(response => response.json())
-//         .then(data => {
-//             var amount = document.getElementById('converterBTC').value;
-//             var convertedValue = document.getElementById('output')
-//             var bitcoinValue = data;
-//             convertedValue.innerText = (bitcoinValue * amount).toFixed(2) + " €";
-//         })
-//         .catch(error => console.error('Error fetching data:', error));
-// }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD,JPY,EUR&api_key=db34a3799a2813ae847aa1145cdd903b1b7fc3aec63c1c1a1eec59435ca95c4c')
@@ -40,10 +28,7 @@ document.getElementById('converterBTC').addEventListener('keypress', function (e
         event.preventDefault(); // Prevent form submission
     }
 });
-// document.getElementById('converterBTC').addEventListener('input',  () => {
-//     convert();
-// });
-// document.addEventListener('DOMContentLoaded', () => { convert()});
+
 
 
 //add a new Box
@@ -73,12 +58,35 @@ document.getElementById('addBoxSymbol').addEventListener('click', function () {
     container.insertBefore(buildBox(), addBox);
 })
 
+function deleteAssetBox(id){
+    document.getElementById(id).remove()
+
+    fetch(`/asset/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); // If the response is in JSON format
+        })
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
 function appendAsset(asset, element) {
     new ElementBuilder("div").id(asset.id).class("box")
         .append(new ElementBuilder("img")
             .with("src", "assets/images/X_Symbol.png")
             .class("removeSymbol")
-            .listener("click", () => document.getElementById(asset.id).remove()))
+            .listener("click", () => deleteAssetBox(asset.id)))
         .append(new ElementBuilder("img")
             .with("src", "assets/images/menu.png")
             .class("menuSymbol")
@@ -106,4 +114,21 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => console.error('Error fetching data:', error));
 });
+
+// function convert() {
+//     fetch('/currency')
+//         .then(response => response.json())
+//         .then(data => {
+//             var amount = document.getElementById('converterBTC').value;
+//             var convertedValue = document.getElementById('output')
+//             var bitcoinValue = data;
+//             convertedValue.innerText = (bitcoinValue * amount).toFixed(2) + " €";
+//         })
+//         .catch(error => console.error('Error fetching data:', error));
+// }
+
+// document.getElementById('converterBTC').addEventListener('input',  () => {
+//     convert();
+// });
+// document.addEventListener('DOMContentLoaded', () => { convert()});
 
