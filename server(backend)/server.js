@@ -3,10 +3,10 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
+const assetsInUse = require('./assetModels')
+const {fetchData} = require('./apiService'); //für crypto api
 
-const { fetchData } = require('./apiService'); //für crypto api
-
-var bitcoinValue;
+var currentAssetValue;
 
 // Parse urlencoded bodies
 app.use(bodyParser.json());
@@ -15,16 +15,20 @@ app.use(bodyParser.json());
 const staticFilesPath = path.join(__dirname, '..', 'client(frontend)');
 app.use(express.static(staticFilesPath));
 
+app.get('/assets', function (req, res) {
+    refreshPrice();
+    res.send(assetsInUse);
+})
 
 app.get('/currency', function (req, res) {
-    getBitcoinValue();
-    console.log("send Api Data do client" + bitcoinValue)
-    res.send(bitcoinValue);
+    getCryptoValue('ETH');
+    console.log("send Api Data do client" + currentAssetValue)
+    res.send(currentAssetValue);
 })
 
 
-function getBitcoinValue(){
-    const url = 'https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=EUR&api_key=db34a3799a2813ae847aa1145cdd903b1b7fc3aec63c1c1a1eec59435ca95c4c';
+function getCryptoValue(id) {
+    const url = `https://min-api.cryptocompare.com/data/price?fsym=${id}&tsyms=EUR&api_key=db34a3799a2813ae847aa1145cdd903b1b7fc3aec63c1c1a1eec59435ca95c4c`;
 
 // Make a GET request to the URL
     fetch(url)
@@ -37,14 +41,20 @@ function getBitcoinValue(){
         })
         .then(data => {
             // Handle the data from the response
-            console.log("got data from AP!" + data); // For example, log it to the console
-            bitcoinValue = data;
+            console.log("got data from API " + data.EUR); // For example, log it to the console
+            assetsInUse[id].price = data.EUR;
         })
         .catch(error => {
             // Handle any errors that occur during the fetch
             console.error('There was a problem with the fetch operation:', error);
         });
 }
+
+function refreshPrice(){
+Object.keys(assetsInUse).forEach(key => {
+    getCryptoValue(key);
+})}
+//refreshPrice();
 
 app.get('/api/data', async (req, res) => {
     try {
@@ -53,7 +63,7 @@ app.get('/api/data', async (req, res) => {
         //console.log(res.json(data));
         res.json(data);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch data' });
+        res.status(500).json({error: 'Failed to fetch data'});
     }
 });
 
