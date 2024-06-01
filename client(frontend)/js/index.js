@@ -52,12 +52,10 @@ function buildBox() {
 }
 
 document.getElementById('addBoxSymbol').addEventListener('click', function () {
-    var container = document.querySelector('.container');
-    var addBox = document.getElementById('addBox');
-
-    container.insertBefore(buildBox(), addBox);
+    location.href = 'newAsset.html'
 })
 
+//delete Box
 function deleteAssetBox(id){
     document.getElementById(id).remove()
 
@@ -97,7 +95,7 @@ function appendAsset(asset, element) {
         .insertBefore(element, document.getElementById('addBox'))
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+function loadAssets(){
     fetch('/assets')
         .then(response => response.json())
         .then(data => {
@@ -113,7 +111,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         })
         .catch(error => console.error('Error fetching data:', error));
-});
+}
+
+window.onload = (event) => {
+    loadAssets();
+};
 
 // function convert() {
 //     fetch('/currency')

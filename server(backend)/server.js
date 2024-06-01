@@ -3,8 +3,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-const assetsInUse = require('./assetModels')
 const {fetchData} = require('./apiService'); //für crypto api
+const {cryptoAssets,assetsInUse, allAssets} = require('./assetModels.js');
 
 var currentAssetValue;
 
@@ -20,11 +20,28 @@ app.get('/assets', function (req, res) {
     res.send(assetsInUse);
 })
 
+app.get('/assets/all', function (req, res) {
+    refreshPrice();
+    res.send(allAssets);
+})
+
 app.get('/currency', function (req, res) {
     getCryptoValue('ETH');
     console.log("send Api Data do client" + currentAssetValue)
     res.send(currentAssetValue);
 })
+
+app.get('/api/data', async (req, res) => {
+    try {
+        const data = await fetchData();
+        console.log("api in server geholt");
+        //console.log(res.json(data));
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({error: 'Failed to fetch data'});
+    }
+});
+
 
 app.delete('/asset/:id', (req,res) =>{
     const resourceId = req.params.id;
@@ -32,6 +49,21 @@ app.delete('/asset/:id', (req,res) =>{
     delete assetsInUse[resourceId];
     res.status(200).json({ message: 'Resource deleted successfully' });
 })
+
+app.post('/asset/:id', (req,res) =>{
+    const resourceId = req.params.id;
+    console.log(resourceId);
+    if (allAssets.hasOwnProperty(resourceId)) { // Überprüfen, ob das Asset existiert
+        res.status(200).json({ message: 'Resource added successfully' });
+        assetsInUse[resourceId] = allAssets[resourceId];}
+    else {
+        res.status(400).json({ message: 'Resource not added, something went rong' });
+    }
+})
+
+app.listen(3000, () => {
+    console.log("Server now listening on http://localhost:3000/");
+});
 
 
 function getCryptoValue(id) {
@@ -49,7 +81,7 @@ function getCryptoValue(id) {
         .then(data => {
             // Handle the data from the response
             console.log("got data from API " + data.EUR); // For example, log it to the console
-            assetsInUse[id].price = data.EUR;
+            allAssets[id].price = data.EUR;
         })
         .catch(error => {
             // Handle any errors that occur during the fetch
@@ -58,23 +90,7 @@ function getCryptoValue(id) {
 }
 
 function refreshPrice(){
-Object.keys(assetsInUse).forEach(key => {
-    getCryptoValue(key);
-})}
+    Object.keys(allAssets).forEach(key => {
+        getCryptoValue(key);
+    })}
 //refreshPrice();
-
-app.get('/api/data', async (req, res) => {
-    try {
-        const data = await fetchData();
-        console.log("api in server geholt");
-        //console.log(res.json(data));
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({error: 'Failed to fetch data'});
-    }
-});
-
-
-app.listen(3000, () => {
-    console.log("Server now listening on http://localhost:3000/");
-});

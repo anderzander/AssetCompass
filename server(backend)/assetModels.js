@@ -11,9 +11,19 @@ const cryptoAssets = {
     LINK: {id: 'LINK', name: 'Chainlink'}
 };
 
-module.exports = cryptoAssets;
 
 const assetsInUse = {
+    BTC: {
+        id: 'BTC',
+        asset: 'crypto',
+        name: 'Bitcoin',
+        price: null,
+        logo: 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png?1696501400'
+    }
+};
+
+
+const allAssets = {
     BTC: {
         id: 'BTC',
         asset: 'crypto',
@@ -34,7 +44,14 @@ const assetsInUse = {
         name: 'Dogecoin',
         price: null,
         logo: 'https://assets.coingecko.com/coins/images/5/standard/dogecoin.png?1696501409'
+    },
+    ADA: {
+        id: 'ADA',
+        asset: 'crypto',
+        name: 'Cardano',
+        price: null,
+        logo: 'https://assets.coingecko.com/coins/images/975/standard/cardano.png?1696502090'
     }
 };
 
-module.exports = assetsInUse;
+module.exports = {cryptoAssets, assetsInUse, allAssets};
