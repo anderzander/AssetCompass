@@ -137,4 +137,4 @@ function refreshPrice() {
     })
 }
 
-//refreshPrice();
+refreshPrice();

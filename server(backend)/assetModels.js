@@ -46,6 +46,48 @@ const allAssets = {
         price: null,
         logo: 'https://assets.coingecko.com/coins/images/975/standard/cardano.png?1696502090'
     },
+    BNB: {
+        id: 'BNB',
+        asset: 'crypto',
+        name: 'BNB',
+        price: null,
+        logo: 'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png?1696501970'
+    },
+    SHIB: {
+        id: 'SHIB',
+        asset: 'crypto',
+        name: 'Shiba Inu',
+        price: null,
+        logo: 'https://assets.coingecko.com/coins/images/11939/standard/shiba.png?1696511800'
+    },
+    USDT: {
+        id: 'USDT',
+        asset: 'crypto',
+        name: 'Tether',
+        price: null,
+        logo: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png?1696501661'
+    },
+    XRP: {
+        id: 'XRP',
+        asset: 'crypto',
+        name: 'XRP',
+        price: null,
+        logo: 'https://assets.coingecko.com/coins/images/44/standard/xrp-symbol-white-128.png?1696501442'
+    },
+    SOL: {
+        id: 'SOL',
+        asset: 'crypto',
+        name: 'Solana',
+        price: null,
+        logo: 'https://assets.coingecko.com/coins/images/4128/standard/solana.png?1696504756'
+    },
+    PEPE: {
+        id: 'PEPE',
+        asset: 'crypto',
+        name: 'Pepe',
+        price: null,
+        logo: 'https://assets.coingecko.com/coins/images/29850/standard/pepe-token.jpeg?1696528776'
+    },
     TSLA: {
         id: 'TSLA',
         asset: 'stock',
