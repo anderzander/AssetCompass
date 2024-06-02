@@ -12,15 +12,7 @@ const cryptoAssets = {
 };
 
 
-const assetsInUse = {
-    BTC: {
-        id: 'BTC',
-        asset: 'crypto',
-        name: 'Bitcoin',
-        price: null,
-        logo: 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png?1696501400'
-    }
-};
+const assetsInUse = {};
 
 
 const allAssets = {

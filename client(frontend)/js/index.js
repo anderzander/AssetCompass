@@ -165,7 +165,7 @@ function addChartForCryptoBox(chartName, date, price) {
             },
             layout: {
                 padding: {
-                    left: 0,
+                    left: 8,
                     right: 20,
                     bottom: 20,
                     top: 20
