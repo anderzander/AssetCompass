@@ -117,6 +117,38 @@ window.onload = (event) => {
     loadAssets();
 };
 
+//chart test
+const xValues = ["Hallo",1,2,3,4,5,6,7];
+const yValues = [70000, 70037.76,69264.17,69264.17,69511.53,70613.89,69533.54,68858.38];
+
+new Chart("myChart", {
+    type: "line",
+    data: {
+        labels: xValues,
+        datasets: [{
+            fill: false,
+            lineTension: 0,
+            backgroundColor: "rgb(229,1,35)",
+            borderColor: "rgb(229,1,35)",
+            data: yValues,
+            pointRadius: 3
+        }]
+    },
+    options: {
+        legend: {display: false},
+        scales: {
+            xAxes: [{
+                gridLines: { display: false },
+                ticks: {display: false}
+            }],
+            yAxes: [{
+                ticks: {display:false},
+                gridLines: { display: false }
+            }]
+        }
+    }
+});
+
 // function convert() {
 //     fetch('/currency')
 //         .then(response => response.json())

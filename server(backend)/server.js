@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
 const {fetchData} = require('./apiService'); //für crypto api
-const {cryptoAssets,assetsInUse, allAssets} = require('./assetModels.js');
+const {cryptoAssets, assetsInUse, allAssets} = require('./assetModels.js');
 
 var currentAssetValue;
 
@@ -43,21 +43,21 @@ app.get('/api/data', async (req, res) => {
 });
 
 
-app.delete('/asset/:id', (req,res) =>{
+app.delete('/asset/:id', (req, res) => {
     const resourceId = req.params.id;
     console.log(resourceId);
     delete assetsInUse[resourceId];
-    res.status(200).json({ message: 'Resource deleted successfully' });
+    res.status(200).json({message: 'Resource deleted successfully'});
 })
 
-app.post('/asset/:id', (req,res) =>{
+app.post('/asset/:id', (req, res) => {
     const resourceId = req.params.id;
     console.log(resourceId);
     if (allAssets.hasOwnProperty(resourceId)) { // Überprüfen, ob das Asset existiert
-        res.status(200).json({ message: 'Resource added successfully' });
-        assetsInUse[resourceId] = allAssets[resourceId];}
-    else {
-        res.status(400).json({ message: 'Resource not added, something went rong' });
+        res.status(200).json({message: 'Resource added successfully'});
+        assetsInUse[resourceId] = allAssets[resourceId];
+    } else {
+        res.status(400).json({message: 'Resource not added, something went rong'});
     }
 })
 
@@ -89,8 +89,13 @@ function getCryptoValue(id) {
         });
 }
 
-function refreshPrice(){
+function refreshPrice() {
     Object.keys(allAssets).forEach(key => {
-        getCryptoValue(key);
-    })}
+        //todo es werden nur crypto assets aktualisiert, für alle anderen Assets werden die statischen price verwendet!!
+        if (allAssets[key].asset === 'crypto') {
+            getCryptoValue(key);
+        }
+    })
+}
+
 //refreshPrice();
