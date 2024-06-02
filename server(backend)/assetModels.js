@@ -29,6 +29,8 @@ const allAssets = {
         asset: 'crypto',
         name: 'Bitcoin',
         price: null,
+        historicalPrice: [],
+        historicalDate: [],
         logo: 'https://assets.coingecko.com/coins/images/1/standard/bitcoin.png?1696501400'
     },
     ETH: {

@@ -94,7 +94,13 @@ function appendAsset(asset, element) {
                 .class("assetLogo")))
         .append(new ElementBuilder("h1").text(asset.name).class("box-text-content"))
         .append(new ElementBuilder("h2").text("€" + asset.price).class("box-text-content"))
+        .append(new ElementBuilder("canvas").id("chart" + asset.id))
         .insertBefore(element, document.getElementById('addBox'))
+
+    //time out is important then cart can't be loaded if the canvas DOM element doesn't exist
+    setTimeout(() => {
+         addChartForCryptoBox("chart" + asset.id, asset.historicalDate, asset.historicalPrice);
+     }, 500);
 }
 
 function loadAssets() {
@@ -119,43 +125,55 @@ window.onload = (event) => {
     loadAssets();
 };
 
-//chart test
-const xValues = ["Hallo", 1, 2, 3, 4, 5, 6, 7];
-const yValues = [70000, 70037.76, 69264.17, 69264.17, 69511.53, 70613.89, 69533.54, 68858.38];
+//chart
+function addChartForCryptoBox(chartName, date, price) {
+    const xValues = date;
+    const yValues = price;
+    var color;
 
-new Chart("myChart", {
-    type: "line",
-    data: {
-        labels: xValues,
-        datasets: [{
-            fill: false,
-            lineTension: 0,
-            backgroundColor: "rgb(196,196,196)",
-            borderColor: "rgb(229,1,35)",
-            data: yValues,
-            pointRadius: 3
-        }]
-    },
-    options: {
-        legend: {display: false},
-        scales: {
-            xAxes: [{
-                gridLines: {display: false},
-                ticks: {display: false}
-            }],
-            yAxes: [{
-                ticks: {display: false},
-                gridLines: {display: false}
+    //if price at the start of the array is lower at the end of the array chart is red else green
+    if (price[0] < price[price.length - 1]){
+        color = "rgb(67,150,74)"
+    } else {
+        color = "rgb(229,1,35)"
+    }
+
+    new Chart(document.getElementById(chartName).getContext('2d'), {
+        type: "line",
+        data: {
+            labels: xValues,
+            datasets: [{
+                fill: false,
+                lineTension: 0,
+                backgroundColor: color,
+                borderColor: color,
+                data: yValues,
+                pointRadius: 2
             }]
         },
-        layout: {
-            padding: {
-                left: 0,
-                right: 20,
+        options: {
+            legend: {display: false},
+            scales: {
+                xAxes: [{
+                    gridLines: {display: false},
+                    ticks: {display: false}
+                }],
+                yAxes: [{
+                    ticks: {display: false},
+                    gridLines: {display: false}
+                }]
+            },
+            layout: {
+                padding: {
+                    left: 0,
+                    right: 20,
+                    bottom: 20,
+                    top: 20
+                }
             }
         }
-    }
-});
+    });
+}
 
 // function convert() {
 //     fetch('/currency')
