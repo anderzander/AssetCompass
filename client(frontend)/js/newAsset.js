@@ -2,9 +2,12 @@ import {ElementBuilder} from "./builders.js";
 
 function appendAsset(asset, element) {
     new ElementBuilder("div").id(asset.id).class("box").listener('click', () => addAssetToIndexHTML(asset.id))
-        .append(new ElementBuilder("img").with("src", asset.logo))
-        .append(new ElementBuilder("h1").text(asset.name))
-        .append(new ElementBuilder("p").text(asset.price))
+        .append(new ElementBuilder("div").class("logo-Container")
+            .append(new ElementBuilder("img")
+                .with("src", asset.logo)
+                .class("assetLogo")))
+        .append(new ElementBuilder("h1").text(asset.name).class("box-text-content"))
+        .append(new ElementBuilder("h2").text("€" + asset.price).class("box-text-content"))
         .appendTo(element)
 }
 

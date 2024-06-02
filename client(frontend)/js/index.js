@@ -30,7 +30,6 @@ document.getElementById('converterBTC').addEventListener('keypress', function (e
 });
 
 
-
 //add a new Box
 function buildBox() {
     var newBox = document.createElement('div');
@@ -56,7 +55,7 @@ document.getElementById('addBoxSymbol').addEventListener('click', function () {
 })
 
 //delete Box
-function deleteAssetBox(id){
+function deleteAssetBox(id) {
     document.getElementById(id).remove()
 
     fetch(`/asset/${id}`, {
@@ -89,13 +88,16 @@ function appendAsset(asset, element) {
             .with("src", "assets/images/menu.png")
             .class("menuSymbol")
             .listener("click", () => location.href = 'assetEdit.html'))
-        .append(new ElementBuilder("img").with("src", asset.logo))
-        .append(new ElementBuilder("h1").text(asset.name))
-        .append(new ElementBuilder("p").text(asset.price))
+        .append(new ElementBuilder("div").class("logo-Container")
+            .append(new ElementBuilder("img")
+                .with("src", asset.logo)
+                .class("assetLogo")))
+        .append(new ElementBuilder("h1").text(asset.name).class("box-text-content"))
+        .append(new ElementBuilder("h2").text("€" + asset.price).class("box-text-content"))
         .insertBefore(element, document.getElementById('addBox'))
 }
 
-function loadAssets(){
+function loadAssets() {
     fetch('/assets')
         .then(response => response.json())
         .then(data => {
@@ -104,7 +106,7 @@ function loadAssets(){
             for (const key in data) {
                 if (data.hasOwnProperty(key)) {
                     const asset = data[key];
-                    appendAsset(asset,container)
+                    appendAsset(asset, container)
                 }
             }
 
@@ -118,8 +120,8 @@ window.onload = (event) => {
 };
 
 //chart test
-const xValues = ["Hallo",1,2,3,4,5,6,7];
-const yValues = [70000, 70037.76,69264.17,69264.17,69511.53,70613.89,69533.54,68858.38];
+const xValues = ["Hallo", 1, 2, 3, 4, 5, 6, 7];
+const yValues = [70000, 70037.76, 69264.17, 69264.17, 69511.53, 70613.89, 69533.54, 68858.38];
 
 new Chart("myChart", {
     type: "line",
@@ -128,7 +130,7 @@ new Chart("myChart", {
         datasets: [{
             fill: false,
             lineTension: 0,
-            backgroundColor: "rgb(229,1,35)",
+            backgroundColor: "rgb(196,196,196)",
             borderColor: "rgb(229,1,35)",
             data: yValues,
             pointRadius: 3
@@ -138,13 +140,19 @@ new Chart("myChart", {
         legend: {display: false},
         scales: {
             xAxes: [{
-                gridLines: { display: false },
+                gridLines: {display: false},
                 ticks: {display: false}
             }],
             yAxes: [{
-                ticks: {display:false},
-                gridLines: { display: false }
+                ticks: {display: false},
+                gridLines: {display: false}
             }]
+        },
+        layout: {
+            padding: {
+                left: 0,
+                right: 20,
+            }
         }
     }
 });
