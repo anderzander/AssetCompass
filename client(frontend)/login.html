@@ -15,13 +15,16 @@
 </header>
 <div class="login-container">
     <div class="form-box">
+        <button class="btn-exit" onclick="location.href='index.html'" >
+            <i class="fa-solid fa-circle-xmark"></i>
+        </button>
     <h2 id="title">Sign Up</h2>
-        <form action="register.php" method="post">
+        <form id="signupForm" method="post">
             <div class="input-group">
                 <div class="input-field" id="nameField">
                     <i class="fa-solid fa-user"></i>
                     <label>
-                        <input type="text" placeholder="Name">
+                        <input type="text" id="name" placeholder="Username">
                     </label>
                 </div>
                 <div class="input-field">
@@ -45,9 +48,8 @@
             </div>
             <div class="btn-field">
                 <button type="button" id="signupBtn">sign up</button>
-                <button type="button" id="signinBtn" class="disable">sign in</button>
+                <button type="button" id="signinBtn">sign in</button>
             </div>
-
         </form>
 </div>
 </div>
