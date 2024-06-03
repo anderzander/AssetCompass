@@ -144,3 +144,15 @@ input{
     background: #eaeaea;
     color: #555;
 }
+.btn-exit{
+    background-color: white;
+    color: #3c00a0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    position: absolute;
+    top: 60px;
+    right: 60px;
+    font-size: 20px;
+}

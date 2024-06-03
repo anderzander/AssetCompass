@@ -5,6 +5,9 @@ const {all} = require("express/lib/application");
 const app = express();
 const {fetchData} = require('./apiService'); //für crypto api
 const {cryptoAssets, assetsInUse, allAssets} = require('./assetModels.js');
+const MongoClient = require('mongodb').MongoClient
+const url = "mongodb://localhost:27017/";
+const dbName = 'userDatabase'
 
 var currentAssetValue;
 
@@ -14,6 +17,37 @@ app.use(bodyParser.json());
 // Serve static content in directory 'client(frontend)'
 const staticFilesPath = path.join(__dirname, '..', 'client(frontend)');
 app.use(express.static(staticFilesPath));
+
+
+
+app.post("/signup", async (req, res) => {
+    try {
+        const userData = req.body;
+        const client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+
+
+        const existingUser = await db.collection("users").findOne({ email: userData.email });
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
+
+        await db.collection("users").insertOne({
+            name: userData.name,
+            email: userData.email,
+            password: userData.password
+        });
+
+        res.status(201).json({ message: "User created successfully"});
+    } catch (error) {
+        console.error("Signup error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
+
 
 app.get('/assets', function (req, res) {
     refreshPrice();
@@ -136,5 +170,6 @@ function refreshPrice() {
         }
     })
 }
+
 
 refreshPrice();
