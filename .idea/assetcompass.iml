@@ -9,5 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="0da263bc6d" level="application" />
+    <orderEntry type="library" name="Chart.js" level="application" />
   </component>
 </module>
