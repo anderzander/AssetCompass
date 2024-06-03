@@ -18,6 +18,19 @@ app.use(bodyParser.json());
 const staticFilesPath = path.join(__dirname, '..', 'client(frontend)');
 app.use(express.static(staticFilesPath));
 
+app.post("/login", async (req, res) => {
+    const {email, password} = req.body;
+    const client = await MongoClient.connect(url);
+    const db = client.db(dbName);
+
+    const user = await db.collection('users').findOne({email: email});
+
+    if (user && user.password === password) {
+        return res.status(200).send({});
+    } else {
+        return res.status(401).send('Anmeldedaten ungültig');
+    }
+})
 
 
 app.post("/signup", async (req, res) => {
@@ -45,8 +58,6 @@ app.post("/signup", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
-
 
 
 app.get('/assets', function (req, res) {
