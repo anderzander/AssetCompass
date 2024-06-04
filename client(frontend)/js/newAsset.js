@@ -67,7 +67,7 @@ function addChartForCryptoBox(chartName, date, price) {
     var color;
 
     //if price at the start of the array is lower at the end of the array chart is red else green
-    if (price[0] < price[price.length - 1]){
+    if (price[0] < price[(price.length) - 1]){
         color = "rgb(67,150,74)"
     } else {
         color = "rgb(229,1,35)"

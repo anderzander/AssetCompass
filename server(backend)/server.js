@@ -59,6 +59,15 @@ app.post("/signup", async (req, res) => {
     }
 });
 
+app.get('/getDb', async function (req, res) {
+    const userData = req.body;
+    const client = await MongoClient.connect(url);
+    const db = client.db(dbName);
+
+    const existingUser = await db.collection("users").findOne();
+        res.send(existingUser);
+
+});
 
 app.get('/assets', function (req, res) {
     refreshPrice();

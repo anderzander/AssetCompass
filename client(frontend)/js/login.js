@@ -28,9 +28,9 @@ signupBtn.addEventListener('click', function () {
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.message) {
-                        alert("registered");
-                    }
+                    // if (ture) {
+                    //     alert("registered");
+                    // }
                 })
         }
     }})
