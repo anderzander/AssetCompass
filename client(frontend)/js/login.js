@@ -29,7 +29,7 @@ signupBtn.addEventListener('click', function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.message) {
-                        alert("data.message");
+                        alert("registered");
                     }
                 })
         }
@@ -37,11 +37,32 @@ signupBtn.addEventListener('click', function () {
 
 signinBtn.addEventListener('click', function (event) {
     event.preventDefault();
-    if (title.innerHTML !== "Sign In")
+    if (title.innerHTML !== "Sign In") {
         changeFormForSignIn();
+    }else{
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-});
-
+        const loginData = {email, password};
+        fetch('login',{
+            method: "POST",
+            headers:{
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(loginData)  // Direkte Verwendung von loginData statt {loginData}
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Anmeldedaten ungültig');
+                }
+            })
+            .then(data => {
+                window.location.href = '/userPage.html'; // Weiterleitung zur Benutzerseite
+            })
+            }
+            });
 function changeFormForSignIn() {
     nameField.style.maxHeight = "0";
     title.innerHTML = "Sign In";
