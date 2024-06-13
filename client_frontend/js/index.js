@@ -1,26 +1,6 @@
 import {ElementBuilder, ParentChildBuilder} from './builders.js';
 
 
-//add a new Box
-function buildBox() {
-    var newBox = document.createElement('div');
-    newBox.className = 'box';
-
-    new ElementBuilder("img")
-        .with("src", "assets/images/X_Symbol.png")
-        .class("removeSymbol")
-        .listener("click", () => newBox.remove())
-        .appendTo(newBox);
-
-    new ElementBuilder("img")
-        .with("src", "assets/images/menu.png")
-        .class("menuSymbol")
-        .listener("click", () => location.href = 'assetEdit.html')
-        .appendTo(newBox);
-
-    return newBox
-}
-
 document.getElementById('addBoxSymbol').addEventListener('click', function () {
     location.href = 'newAsset.html'
 })
@@ -113,7 +93,25 @@ function loadAssets() {
     fetch('/assets')
         .then(response => response.json())
         .then(data => {
-            console.log(data.BTC);
+            const container = document.querySelector('.container');
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const asset = data[key];
+                    appendAsset(asset, container, document.getElementById('addBox'))
+                }
+            }
+
+
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+function loadUserAssets() {
+    fetch('/assetsUser', {
+        method: 'GET'
+    })
+        .then(response => response.json())
+        .then(data => {
             const container = document.querySelector('.container');
             for (const key in data) {
                 if (data.hasOwnProperty(key)) {
@@ -129,16 +127,23 @@ function loadAssets() {
 
 window.onload = (event) => {
     loadAssets();
+    //loadUserAssets()
 };
 
 //chart
 function addChartForCryptoBox(chartName, date, price) {
+
+    if (!Array.isArray(date) || !Array.isArray(price) || date.length === 0 || price.length === 0) {
+        console.error("Date or price array is not defined or empty: " + chartName);
+        return;
+    }
+
     const xValues = date;
     const yValues = price;
     var color;
 
     //if price at the start of the array is lower at the end of the array chart is red else green
-    if (price[0] < price[(price.length) - 1]) {
+if (yValues[0] < yValues[(yValues.length) - 1]) {
         color = "rgb(67,150,74)"
     } else {
         color = "rgb(229,1,35)"

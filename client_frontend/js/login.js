@@ -54,9 +54,10 @@ signinBtn.addEventListener('click', function (event) {
         })
             .then(async response => {
                 if (response.ok) {
-                    window.location.href = '/userPage.html'; //
+                    console.log( await response.text())
+                    location.href = 'index.html';
                 } else {
-                    console.log(await response.text())
+                    console.log( await response.text())
                 }
             })
     }

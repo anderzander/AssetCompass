@@ -3,7 +3,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-const {cryptoAssets, assetsInUse, allAssets} = require('./assetModels.js');
+const {assetsInUse, allAssets, SignInTestAssets} = require('./assetModels.js');
+const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET} = require('./secretTokens.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
 const dbName = 'userDatabase'
@@ -11,6 +12,8 @@ const bcrypt = require("bcrypt")
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('js-yaml');
 const fs = require('fs');
+const jwt = require("jsonwebtoken")
+const cookieParser = require('cookie-parser');
 const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.yaml'), 'utf8'));
 
 //Swagger Docs
@@ -18,6 +21,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Parse urlencoded bodies
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // Serve static content in directory 'client_frontend'
 const staticFilesPath = path.join(__dirname, '..', 'client_frontend');
@@ -34,14 +38,23 @@ app.post("/login", async (req, res) => {
 
     const user = await db.collection('users').findOne({email: userData.email});
 
-    if (!user){
+    if (!user) {
         return res.status(401).send('user does not exist')
     }
 
-    if (user && await bcrypt.compare(userData.password ,user.password)) {
-       return  res.status(200).send({});
+    if (user && await bcrypt.compare(userData.password, user.password)) {
+
+        //create JWT TOKEN which expires in 30 min and sent it with a cookie to the client
+        const accessToken = jwt.sign({name: user.name}, ACCESS_TOKEN_SECRET, {expiresIn: '30m'});
+        res.cookie("token", accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none'
+        })
+        res.status(200);
+        res.json({accessToken: accessToken})
     } else {
-        return res.status(401).send('invalid password');
+        res.status(401).send('invalid password');
     }
 })
 
@@ -53,12 +66,12 @@ app.post("/signup", async (req, res) => {
         const db = client.db(dbName);
 
 
-        const existingUser = await db.collection("users").findOne({ email: userData.email });
+        const existingUser = await db.collection("users").findOne({email: userData.email});
         if (existingUser) {
-            return res.status(400).json({ message: "User already exists" });
+            return res.status(400).json({message: "User already exists"});
         }
 
-        const salt =  await bcrypt.genSalt();
+        const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(userData.password.toString(), salt)
 
         await db.collection("users").insertOne({
@@ -67,21 +80,31 @@ app.post("/signup", async (req, res) => {
             password: hashedPassword
         });
 
-        res.status(201).json({ message: "User created successfully"});
+        res.status(201).json({message: "User created successfully"});
     } catch (error) {
         console.error("Signup error:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({message: "Internal server error"});
     }
 });
 
 
-app.get('/assets', function (req, res) {
+app.get('/assets', (req, res) => {
     try {
         refreshPrice();
-        res.status(200)
-        res.send(assetsInUse);
-    } catch (error){
-        res.status(500).json({ message: "Internal server error" });
+        res.status(200).json(assetsInUse);
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
+    }
+
+})
+
+//test Endpoint with authorization
+app.get('/assetsUser', authenticateToken, (req, res) => {
+    try {
+        refreshPrice();
+        res.status(200).json(SignInTestAssets);
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
     }
 
 })
@@ -91,8 +114,8 @@ app.get('/assets/all', function (req, res) {
         refreshPrice();
         res.status(200)
         res.send(allAssets);
-    } catch (error){
-        res.status(500).json({ message: "Internal server error" });
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
     }
 
 })
@@ -101,18 +124,16 @@ app.get('/assets/all', function (req, res) {
 app.delete('/asset/:id', (req, res) => {
     try {
         const resourceId = req.params.id;
-        console.log(resourceId);
         delete assetsInUse[resourceId];
         res.status(200).json({message: 'Resource deleted successfully'});
-    } catch (error){
-        res.status(500).json({ message: "Internal server error" });
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
     }
 
 })
 
 app.post('/asset/:id', (req, res) => {
     const resourceId = req.params.id;
-    console.log(resourceId);
     if (allAssets.hasOwnProperty(resourceId)) { // Überprüfen, ob das Asset existiert
         res.status(200).json({message: 'Resource added successfully'});
         assetsInUse[resourceId] = allAssets[resourceId];
@@ -120,8 +141,6 @@ app.post('/asset/:id', (req, res) => {
         res.status(400).json({message: 'Resource not added, something went wrong.'});
     }
 })
-
-
 
 
 function getCryptoValue(id) {
@@ -138,7 +157,6 @@ function getCryptoValue(id) {
         })
         .then(data => {
             // Handle the data from the response
-            console.log("got data from API " + data.EUR); // For example, log it to the console
             allAssets[id].price = data.EUR;
         })
         .catch(error => {
@@ -147,7 +165,7 @@ function getCryptoValue(id) {
         });
 }
 
-function getHistoricalDataForCrypto(id, currency, limit){
+function getHistoricalDataForCrypto(id, currency, limit) {
     const url = `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${id}&tsym=${currency}&limit=${limit}`;
 
 // Make a GET request to the URL
@@ -161,7 +179,6 @@ function getHistoricalDataForCrypto(id, currency, limit){
         })
         .then(data => {
             // Handle the data from the response
-            console.log("got data from API " + data); // For example, log it to the console
             let timeArray = [];
             let valueArray = [];
 
@@ -190,8 +207,25 @@ function refreshPrice() {
         //todo es werden nur crypto assets aktualisiert, für alle anderen Assets werden die statischen price verwendet!!
         if (allAssets[key].asset === 'crypto') {
             getCryptoValue(key);
-            getHistoricalDataForCrypto(key,'EUR', 30);
+            getHistoricalDataForCrypto(key, 'EUR', 30);
         }
+    })
+}
+
+function authenticateToken(req, res, next) {
+    const token = req.cookies.token
+    if (token == null) {
+        return res.sendStatus(401);
+    }
+
+    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) {
+            console.log(err)
+        }
+        if (err) return res.sendStatus(403)
+        console.log(user.name)
+        req.user = user
+        next()
     })
 }
 
