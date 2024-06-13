@@ -28,7 +28,7 @@ signupBtn.addEventListener('click', function () {
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.message) {
+                    if (data.value) {
                         alert("registered");
                     }
                 })
@@ -49,7 +49,7 @@ signinBtn.addEventListener('click', function (event) {
             headers:{
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(loginData)  // Direkte Verwendung von loginData statt {loginData}
+            body: JSON.stringify(loginData)
         })
             .then(response => {
                 if (response.ok) {
@@ -59,7 +59,7 @@ signinBtn.addEventListener('click', function (event) {
                 }
             })
             .then(data => {
-                window.location.href = '/userPage.html'; // Weiterleitung zur Benutzerseite
+                window.location.href = '/userPage.html'; //
             })
             }
             });

@@ -8,14 +8,23 @@ const {cryptoAssets, assetsInUse, allAssets} = require('./assetModels.js');
 const MongoClient = require('mongodb').MongoClient
 const url = "mongodb://localhost:27017/";
 const dbName = 'userDatabase'
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('js-yaml');
+const fs = require('fs');
+
+
+const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.yaml'), 'utf8'));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 var currentAssetValue;
+
 
 // Parse urlencoded bodies
 app.use(bodyParser.json());
 
-// Serve static content in directory 'client(frontend)'
-const staticFilesPath = path.join(__dirname, '..', 'client(frontend)');
+// Serve static content in directory 'client_frontend'
+const staticFilesPath = path.join(__dirname, '..', 'client_frontend');
 app.use(express.static(staticFilesPath));
 
 app.post("/login", async (req, res) => {
