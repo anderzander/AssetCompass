@@ -23,6 +23,10 @@ app.use(bodyParser.json());
 const staticFilesPath = path.join(__dirname, '..', 'client_frontend');
 app.use(express.static(staticFilesPath));
 
+app.listen(3000, () => {
+    console.log("Server now listening on http://localhost:3000/");
+});
+
 app.post("/login", async (req, res) => {
     const {email, password} = req.body;
     const client = await MongoClient.connect(mongoDbUrl);
@@ -68,21 +72,38 @@ app.post("/signup", async (req, res) => {
 
 
 app.get('/assets', function (req, res) {
-    refreshPrice();
-    res.send(assetsInUse);
+    try {
+        refreshPrice();
+        res.status(200)
+        res.send(assetsInUse);
+    } catch (error){
+        res.status(500).json({ message: "Internal server error" });
+    }
+
 })
 
 app.get('/assets/all', function (req, res) {
-    refreshPrice();
-    res.send(allAssets);
+    try {
+        refreshPrice();
+        res.status(200)
+        res.send(allAssets);
+    } catch (error){
+        res.status(500).json({ message: "Internal server error" });
+    }
+
 })
 
 
 app.delete('/asset/:id', (req, res) => {
-    const resourceId = req.params.id;
-    console.log(resourceId);
-    delete assetsInUse[resourceId];
-    res.status(200).json({message: 'Resource deleted successfully'});
+    try {
+        const resourceId = req.params.id;
+        console.log(resourceId);
+        delete assetsInUse[resourceId];
+        res.status(200).json({message: 'Resource deleted successfully'});
+    } catch (error){
+        res.status(500).json({ message: "Internal server error" });
+    }
+
 })
 
 app.post('/asset/:id', (req, res) => {
@@ -92,13 +113,11 @@ app.post('/asset/:id', (req, res) => {
         res.status(200).json({message: 'Resource added successfully'});
         assetsInUse[resourceId] = allAssets[resourceId];
     } else {
-        res.status(400).json({message: 'Resource not added, something went rong'});
+        res.status(400).json({message: 'Resource not added, something went wrong.'});
     }
 })
 
-app.listen(3000, () => {
-    console.log("Server now listening on http://localhost:3000/");
-});
+
 
 
 function getCryptoValue(id) {
@@ -174,3 +193,4 @@ function refreshPrice() {
 
 
 refreshPrice();
+
