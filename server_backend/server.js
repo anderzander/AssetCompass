@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-const {assetsInUse, allAssets, SignInTestAssets} = require('./assetModels.js');
+const { allAssets} = require('./assetModels.js');
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET} = require('./secretTokens.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
@@ -15,6 +15,7 @@ const fs = require('fs');
 const jwt = require("jsonwebtoken")
 const cookieParser = require('cookie-parser');
 const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.yaml'), 'utf8'));
+
 
 //Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -45,7 +46,7 @@ app.post("/login", async (req, res) => {
     if (user && await bcrypt.compare(userData.password, user.password)) {
 
         //create JWT TOKEN which expires in 30 min and sent it with a cookie to the client
-        const accessToken = jwt.sign({name: user.name}, ACCESS_TOKEN_SECRET, {expiresIn: '30m'});
+        const accessToken = jwt.sign({name: user.email}, ACCESS_TOKEN_SECRET, {expiresIn: '30m'});
         res.cookie("token", accessToken, {
             httpOnly: true,
             secure: true,
@@ -77,7 +78,8 @@ app.post("/signup", async (req, res) => {
         await db.collection("users").insertOne({
             name: userData.name,
             email: userData.email,
-            password: hashedPassword
+            password: hashedPassword,
+            assets: []
         });
 
         res.status(201).json({message: "User created successfully"});
@@ -88,13 +90,34 @@ app.post("/signup", async (req, res) => {
 });
 
 
-app.get('/assets', (req, res) => {
+app.get('/assets', authenticateToken, async (req, res) => {
+    const user = req.user
+
+    let assetsInUse = {};
     try {
-        refreshPrice();
+        const client = await MongoClient.connect(mongoDbUrl);
+        const db = client.db(dbName);
+        const userFromDb = await db.collection("users")
+            .findOne({email: user.name})
+
+        console.log(userFromDb.assets)
+        console.log(assetsInUse)
+        userFromDb.assets.forEach(function (str) {
+            console.log(str);
+            assetsInUse[str] = allAssets[str]
+        })
         res.status(200).json(assetsInUse);
     } catch (error) {
         res.status(500).json({message: "Internal server error"});
     }
+
+
+    // try {
+    //     refreshPrice();
+    //     res.status(200).json(assetsInUse);
+    // } catch (error) {
+    //     res.status(500).json({message: "Internal server error"});
+    // }
 
 })
 
@@ -121,25 +144,61 @@ app.get('/assets/all', function (req, res) {
 })
 
 
-app.delete('/asset/:id', (req, res) => {
+app.delete('/asset/:id',authenticateToken, async (req, res) => {
+    const resourceId = req.params.id;
+    const user = req.user
+    console.log("in Post " + user.name)
+
+
     try {
-        const resourceId = req.params.id;
-        delete assetsInUse[resourceId];
-        res.status(200).json({message: 'Resource deleted successfully'});
+        const client = await MongoClient.connect(mongoDbUrl);
+        const db = client.db(dbName);
+        await db.collection("users").updateOne(
+            {email: user.name}, // Filter criteria to find the document
+            {$pull: {assets: resourceId}} // Update operation using $addToSet without duplicates
+        );
+        res.status(200).json({message: 'Resource removed successfully'});
     } catch (error) {
-        res.status(500).json({message: "Internal server error"});
+        res.status(400).json({message: 'Resource not added, something went wrong.'});
     }
+
+
+
+    // try {
+    //     const resourceId = req.params.id;
+    //     delete assetsInUse[resourceId];
+    //     res.status(200).json({message: 'Resource deleted successfully'});
+    // } catch (error) {
+    //     res.status(500).json({message: "Internal server error"});
+    // }
 
 })
 
-app.post('/asset/:id', (req, res) => {
+app.post('/asset/:id', authenticateToken, async (req, res) => {
     const resourceId = req.params.id;
-    if (allAssets.hasOwnProperty(resourceId)) { // Überprüfen, ob das Asset existiert
+    const user = req.user
+    console.log("in Post " + user.name)
+
+
+    try {
+        const client = await MongoClient.connect(mongoDbUrl);
+        const db = client.db(dbName);
+        await db.collection("users").updateOne(
+            {email: user.name}, // Filter criteria to find the document
+            {$addToSet: {assets: resourceId}} // Update operation using $addToSet without duplicates
+        );
         res.status(200).json({message: 'Resource added successfully'});
-        assetsInUse[resourceId] = allAssets[resourceId];
-    } else {
+    } catch (error) {
         res.status(400).json({message: 'Resource not added, something went wrong.'});
     }
+
+
+    // if (allAssets.hasOwnProperty(resourceId)) { // Überprüfen, ob das Asset existiert
+    //     res.status(200).json({message: 'Resource added successfully'});
+    //     assetsInUse[resourceId] = allAssets[resourceId];
+    // } else {
+    //     res.status(400).json({message: 'Resource not added, something went wrong.'});
+    // }
 })
 
 

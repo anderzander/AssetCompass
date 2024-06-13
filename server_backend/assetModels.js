@@ -1,17 +1,4 @@
-const SignInTestAssets = {
-    AMZN: {
-        id: 'AMZN',
-        asset: 'stock',
-        name: 'Login works',
-        price: '161.02',
-        logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg'
-    }
-};
-
-const assetsInUse = {};
-
-
-const allAssets = {
+let allAssets = {
     BTC: {
         id: 'BTC',
         asset: 'crypto',
@@ -101,4 +88,4 @@ const allAssets = {
 
 };
 
-module.exports = {assetsInUse, allAssets, SignInTestAssets};
+module.exports = {allAssets};
