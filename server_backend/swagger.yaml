@@ -1,0 +1,130 @@
+openapi: 3.0.0
+info:
+  title: Asset Management API
+  description: API for managing assets, users, and cryptocurrency values.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/
+    description: Development server
+paths:
+  /login:
+    post:
+      summary: Login a user
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Anmeldedaten ungültig"
+
+  /signup:
+    post:
+      summary: Sign up a new user
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request, user already exists
+        '500':
+          description: Server error
+
+  /assets:
+    get:
+      summary: Get all assets in use
+      tags:
+        - Assets
+      responses:
+        '200':
+          description: A list of all assets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Asset'
+
+  /assets/all:
+    get:
+      summary: Get all assets
+      tags:
+        - Assets
+      responses:
+        '200':
+          description: A list of all assets, including those not in use
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Asset'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    Asset:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        value:
+          type: string
+          description: Current market value
