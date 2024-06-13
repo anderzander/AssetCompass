@@ -3,7 +3,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-const {fetchData} = require('./apiService'); //für crypto api
 const {cryptoAssets, assetsInUse, allAssets} = require('./assetModels.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
@@ -12,10 +11,9 @@ const bcrypt = require("bcrypt")
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('js-yaml');
 const fs = require('fs');
-
-
 const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.yaml'), 'utf8'));
 
+//Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Parse urlencoded bodies
@@ -78,18 +76,6 @@ app.get('/assets/all', function (req, res) {
     refreshPrice();
     res.send(allAssets);
 })
-
-
-app.get('/api/data', async (req, res) => {
-    try {
-        const data = await fetchData();
-        console.log("api in server geholt");
-        //console.log(res.json(data));
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({error: 'Failed to fetch data'});
-    }
-});
 
 
 app.delete('/asset/:id', (req, res) => {
