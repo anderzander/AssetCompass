@@ -6,10 +6,10 @@ const app = express();
 const {fetchData} = require('./apiService'); //für crypto api
 const {cryptoAssets, assetsInUse, allAssets} = require('./assetModels.js');
 const MongoClient = require('mongodb').MongoClient
-const url = "mongodb://localhost:27017/";
+const mongoDbUrl = "mongodb://localhost:27017/";
 const dbName = 'userDatabase'
+const bcrypt = require("bcrypt")
 
-var currentAssetValue;
 
 // Parse urlencoded bodies
 app.use(bodyParser.json());
@@ -20,7 +20,7 @@ app.use(express.static(staticFilesPath));
 
 app.post("/login", async (req, res) => {
     const {email, password} = req.body;
-    const client = await MongoClient.connect(url);
+    const client = await MongoClient.connect(mongoDbUrl);
     const db = client.db(dbName);
 
     const user = await db.collection('users').findOne({email: email});
@@ -36,7 +36,7 @@ app.post("/login", async (req, res) => {
 app.post("/signup", async (req, res) => {
     try {
         const userData = req.body;
-        const client = await MongoClient.connect(url);
+        const client = await MongoClient.connect(mongoDbUrl);
         const db = client.db(dbName);
 
 
@@ -45,11 +45,13 @@ app.post("/signup", async (req, res) => {
             return res.status(400).json({ message: "User already exists" });
         }
 
+        const salt =  await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(userData.password.toString(), salt)
 
         await db.collection("users").insertOne({
             name: userData.name,
             email: userData.email,
-            password: userData.password
+            password: hashedPassword
         });
 
         res.status(201).json({ message: "User created successfully"});
@@ -61,7 +63,7 @@ app.post("/signup", async (req, res) => {
 
 app.get('/getDb', async function (req, res) {
     const userData = req.body;
-    const client = await MongoClient.connect(url);
+    const client = await MongoClient.connect(mongoDbUrl);
     const db = client.db(dbName);
 
     const existingUser = await db.collection("users").findOne();
@@ -69,21 +71,16 @@ app.get('/getDb', async function (req, res) {
 
 });
 
-app.get('/assets', function (req, res) {
-    refreshPrice();
+app.get('/assets', async function (req, res) {
+    await refreshPrice();
     res.send(assetsInUse);
 })
 
-app.get('/assets/all', function (req, res) {
-    refreshPrice();
+app.get('/assets/all',async function (req, res) {
+    await refreshPrice();
     res.send(allAssets);
 })
 
-app.get('/currency', function (req, res) {
-    getCryptoValue('ETH');
-    console.log("send Api Data do client" + currentAssetValue)
-    res.send(currentAssetValue);
-})
 
 app.get('/api/data', async (req, res) => {
     try {
@@ -162,7 +159,7 @@ function getHistoricalDataForCrypto(id, currency, limit){
             let valueArray = [];
 
             data.Data.Data.forEach(item => {
-                // Zeitstempel in Datum umwandeln
+                // convert time stamp to date
                 let date = new Date(item.time * 1000);
                 let formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
                 timeArray.push(formattedDate);

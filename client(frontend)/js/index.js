@@ -78,8 +78,45 @@ function deleteAssetBox(id) {
         });
 }
 
-function appendAsset(asset, element) {
-    new ElementBuilder("div").id(asset.id).class("box")
+
+
+var element1ForSwitch = null;
+var element1OriginalId = null;
+var element2ForSwitch = null;
+var element2OriginalId = null;
+
+
+function appendAsset(asset, element, insertBefore) {
+
+
+    new ElementBuilder("div")
+        .id(asset.id).class("box")
+        .with("draggable", "true")
+        .listener("dragstart", () => {
+            element1OriginalId = asset.id;
+            element1ForSwitch = Object.assign({},asset);
+            element1ForSwitch.id = asset.id + "temp";
+            console.log(asset.id.toString())
+        })
+        .listener("dragover", (e) => {
+            e.preventDefault();
+            element2OriginalId = asset.id
+            element2ForSwitch = Object.assign({},asset);
+            element2ForSwitch.id = asset.id + "temp"
+            console.log(asset.id.toString())
+        })
+        .listener("drop", (e) => {
+            e.preventDefault()
+            console.log("drop")
+            appendAsset(element1ForSwitch, element, document.getElementById(element2OriginalId))
+            appendAsset(element2ForSwitch, element, document.getElementById(element1OriginalId))
+
+            document.getElementById(element1OriginalId).remove();
+            document.getElementById(element2OriginalId).remove();
+
+            //todo neue elemente haben Id + "temp" wieder auf original id zurücksetzen!!!!!!;
+            //todo element in richtiger reihenfolge Serverseitig speichern damit reihenfolge beim reload erhalten bleibt!!
+        })
         .append(new ElementBuilder("img")
             .with("src", "assets/images/X_Symbol.png")
             .class("removeSymbol")
@@ -95,12 +132,12 @@ function appendAsset(asset, element) {
         .append(new ElementBuilder("h1").text(asset.name).class("box-text-content"))
         .append(new ElementBuilder("h2").text("€" + asset.price).class("box-text-content"))
         .append(new ElementBuilder("canvas").id("chart" + asset.id))
-        .insertBefore(element, document.getElementById('addBox'))
+        .insertBefore(element, insertBefore)
 
     //time out is important then cart can't be loaded if the canvas DOM element doesn't exist
     setTimeout(() => {
-         addChartForCryptoBox("chart" + asset.id, asset.historicalDate, asset.historicalPrice);
-     }, 500);
+        addChartForCryptoBox("chart" + asset.id, asset.historicalDate, asset.historicalPrice);
+    }, 500);
 }
 
 function loadAssets() {
@@ -112,7 +149,7 @@ function loadAssets() {
             for (const key in data) {
                 if (data.hasOwnProperty(key)) {
                     const asset = data[key];
-                    appendAsset(asset, container)
+                    appendAsset(asset, container, document.getElementById('addBox'))
                 }
             }
 
@@ -132,7 +169,7 @@ function addChartForCryptoBox(chartName, date, price) {
     var color;
 
     //if price at the start of the array is lower at the end of the array chart is red else green
-    if (price[0] < price[(price.length) - 1]){
+    if (price[0] < price[(price.length) - 1]) {
         color = "rgb(67,150,74)"
     } else {
         color = "rgb(229,1,35)"
