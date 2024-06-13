@@ -18,9 +18,6 @@ const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-var currentAssetValue;
-
-
 // Parse urlencoded bodies
 app.use(bodyParser.json());
 
@@ -82,11 +79,6 @@ app.get('/assets/all', function (req, res) {
     res.send(allAssets);
 })
 
-app.get('/currency', function (req, res) {
-    getCryptoValue('ETH');
-    console.log("send Api Data do client" + currentAssetValue)
-    res.send(currentAssetValue);
-})
 
 app.get('/api/data', async (req, res) => {
     try {
