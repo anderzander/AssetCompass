@@ -33,36 +33,36 @@ signupBtn.addEventListener('click', function () {
                     }
                 })
         }
-    }})
+    }
+})
 
 signinBtn.addEventListener('click', function (event) {
     event.preventDefault();
     if (title.innerHTML !== "Sign In") {
         changeFormForSignIn();
-    }else{
+    } else {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
         const loginData = {email, password};
-        fetch('login',{
+        fetch('login', {
             method: "POST",
-            headers:{
+            headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(loginData)
         })
-            .then(response => {
+            .then(async response => {
                 if (response.ok) {
-                    return response.json();
+                    window.location.href = '/userPage.html'; //
                 } else {
-                    throw new Error('Anmeldedaten ungültig');
+                    console.log(await response.text())
                 }
             })
-            .then(data => {
-                window.location.href = '/userPage.html'; //
-            })
-            }
-            });
+    }
+});
+
+
 function changeFormForSignIn() {
     nameField.style.maxHeight = "0";
     title.innerHTML = "Sign In";

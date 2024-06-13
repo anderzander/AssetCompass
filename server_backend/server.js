@@ -28,16 +28,20 @@ app.listen(3000, () => {
 });
 
 app.post("/login", async (req, res) => {
-    const {email, password} = req.body;
+    const userData = req.body;
     const client = await MongoClient.connect(mongoDbUrl);
     const db = client.db(dbName);
 
-    const user = await db.collection('users').findOne({email: email});
+    const user = await db.collection('users').findOne({email: userData.email});
 
-    if (user && user.password === password) {
-        return res.status(200).send({});
+    if (!user){
+        return res.status(401).send('user does not exist')
+    }
+
+    if (user && await bcrypt.compare(userData.password ,user.password)) {
+       return  res.status(200).send({});
     } else {
-        return res.status(401).send('Anmeldedaten ungültig');
+        return res.status(401).send('invalid password');
     }
 })
 
