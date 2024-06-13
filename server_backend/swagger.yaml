@@ -101,6 +101,88 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Asset'
+  /asset/{id}:
+    delete:
+      summary: Delete an asset by ID
+      tags:
+        - Assets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the asset to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Asset deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Resource deleted successfully"
+        '404':
+          description: Asset not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Asset not found"
+
+    post:
+      summary: Add asset by ID
+      tags:
+        - Assets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the asset to add
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Asset data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Asset added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Resource added successfully"
+        '400':
+          description: Asset not added, something went wrong
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Resource not added, something went rong"
 
 components:
   schemas:
@@ -128,3 +210,24 @@ components:
         value:
           type: string
           description: Current market value
+    SuccessMessage:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Operation successful"
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "An error occurred"
+  parameters:
+    IdParam:
+      name: id
+      in: path
+      required: true
+      description: Unique identifier of the asset
+      schema:
+        type: integer
+        format: int64
