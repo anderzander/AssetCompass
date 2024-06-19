@@ -123,10 +123,12 @@ main {
     transform: scale(1.1);
 }
 
-@media screen and (max-width: 800px) {
-    .container {
-        justify-content: center; /* Zentriert die Boxen */
-    }
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    justify-content: center; /* Zentriert die Boxen horizontal */
 }
 
 .login-button-container{
@@ -162,6 +164,7 @@ main {
     height: 25px;
     padding: 7px 2px;
 }
+
 .menuSymbol:hover{
     transform: scale(1.1);
 }
@@ -173,10 +176,11 @@ main {
     align-content: center;
     padding: 10px;
 }
+
 .assetLogo{
     width: 100%;
     hight: 100%;
-    object-fit: cover;
+    float: left;
 }
 
 .box-text-content{
@@ -187,4 +191,68 @@ main {
     margin: 0;
     padding: 5px;
 }
+
+
+@media only screen and (max-width: 768px) {
+    .box {
+        width: 100px; /* Reduziere die Breite der Boxen */
+        height: 100px; /* Reduziere die Höhe der Boxen */
+        padding: 3px; /* Reduziere den Innenabstand der Boxen */
+    }
+
+    .box h1,
+    .box h2 {
+        font-size: 0.8em; /* Kleinere Schriftgröße für den Titel */
+        margin-bottom: 3px; /* Verringere den Abstand unter dem Titel */
+    }
+
+    .box p {
+        font-size: 0.6em; /* Kleinere Schriftgröße für den Text */
+        margin: 0; /* Entferne den Standardabstand des Absatzes */
+    }
+
+    .addBox {
+        width: 100px;
+        height: 100px;
+        padding: 3px;
+    }
+
+    .add_symbol_image {
+        width: 70px; /* Neue Breite für das Hinzufügen-Symbol */
+        height: 70px; /* Neue Höhe für das Hinzufügen-Symbol */
+    }
+
+
+    .logo-Container{
+        width: 50px;
+        height: 50px;
+        justify-content: left;
+        align-content: center;
+        padding: 1px;
+    }
+
+    .assetLogo {
+        width: 50%; /* Verwende 100% der Breite des Containers */
+        height: auto; /* Automatische Höhe beibehalten */
+    }
+
+    .removeSymbol{
+        float: right;
+        width: 8px;
+        height: 8px;
+        padding: 3px; /* Angepasstes Padding für das Entfernungs-Symbol */
+    }
+
+    .menuSymbol{
+        float: right;
+        width: 10px;
+        height: 10px;
+        padding: 3px; /* Angepasstes Padding für das Menü-Symbol */
+    }
+
+    /*chartBTC {*/
+    /*    display: none; !* Verstecke den gesamten Container mit den Grafiken *!*/
+    /*}*/
+}
+
 
