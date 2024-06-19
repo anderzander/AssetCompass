@@ -9,9 +9,7 @@ servers:
 paths:
   /login:
     post:
-      summary: Login a user
-      tags:
-        - User
+      summary: Authenticate user and provide a JWT token.
       requestBody:
         required: true
         content:
@@ -29,127 +27,21 @@ paths:
                 - password
       responses:
         '200':
-          description: Login successful
+          description: Login successful, JWT provided.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
+                  accessToken:
                     type: string
-                    example: "Login successful"
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Anmeldedaten ungültig"
+          description: Unauthorized, user does not exist or invalid password.
 
   /signup:
     post:
-      summary: Sign up a new user
-      tags:
-        - User
+      summary: Register a new user.
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '201':
-          description: User created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Bad request, user already exists
-        '500':
-          description: Server error
-
-  /assets:
-    get:
-      summary: Get all assets in use
-      tags:
-        - Assets
-      responses:
-        '200':
-          description: A list of all assets
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Asset'
-
-  /assets/all:
-    get:
-      summary: Get all assets
-      tags:
-        - Assets
-      responses:
-        '200':
-          description: A list of all assets, including those not in use
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Asset'
-  /asset/{id}:
-    delete:
-      summary: Delete an asset by ID
-      tags:
-        - Assets
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Unique identifier of the asset to delete
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Asset deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Resource deleted successfully"
-        '404':
-          description: Asset not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Asset not found"
-
-    post:
-      summary: Add asset by ID
-      tags:
-        - Assets
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Unique identifier of the asset to add
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        description: Asset data
         required: true
         content:
           application/json:
@@ -158,76 +50,86 @@ paths:
               properties:
                 name:
                   type: string
-                value:
+                email:
                   type: string
-                description:
+                  format: email
+                password:
                   type: string
+              required:
+                - name
+                - email
+                - password
+      responses:
+        '201':
+          description: User created successfully.
+        '400':
+          description: Bad request, user already exists.
+        '500':
+          description: Internal server error.
+
+  /assets:
+    get:
+      summary: Get a list of in-use assets.
       responses:
         '200':
-          description: Asset added successfully
+          description: Successfully retrieved assets.
           content:
             application/json:
               schema:
                 type: object
-                properties:
-                  message:
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error.
+
+  /assets/all:
+    get:
+      summary: Get a list of all assets.
+      responses:
+        '200':
+          description: Successfully retrieved all assets.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties:
                     type: string
-                    example: "Resource added successfully"
+        '500':
+          description: Internal server error.
+
+  /asset/{id}:
+    post:
+      summary: Add an asset to in-use list.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Asset added successfully.
         '400':
-          description: Asset not added, something went wrong
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Resource not added, something went rong"
+          description: Resource not added, something went wrong.
+    delete:
+      summary: Delete an asset from in-use list.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Resource deleted successfully.
+        '500':
+          description: Internal server error.
 
 components:
-  schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        email:
-          type: string
-          format: email
-        password:
-          type: string
-    Asset:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        value:
-          type: string
-          description: Current market value
-    SuccessMessage:
-      type: object
-      properties:
-        message:
-          type: string
-          example: "Operation successful"
-    ErrorMessage:
-      type: object
-      properties:
-        message:
-          type: string
-          example: "An error occurred"
-  parameters:
-    IdParam:
-      name: id
-      in: path
-      required: true
-      description: Unique identifier of the asset
-      schema:
-        type: integer
-        format: int64
+  securitySchemes:
+    cookieAuth:
+      type: cookie
+      in: header
+      name: token
