@@ -130,6 +130,6 @@ paths:
 components:
   securitySchemes:
     cookieAuth:
-      type: cookie
-      in: header
+      type: apiKey
+      in: cookie
       name: token
