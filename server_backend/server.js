@@ -45,12 +45,8 @@ app.post("/login", async (req, res) => {
 
     if (user && await bcrypt.compare(userData.password, user.password)) {
 
-        //create JWT TOKEN which expires in 30 min and sent it with a cookie to the client
         const accessToken = jwt.sign({name: user.email}, ACCESS_TOKEN_SECRET, {expiresIn: '30m'});
         res.cookie("token", accessToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none'
         })
         res.status(200);
         res.json({accessToken: accessToken})
@@ -112,12 +108,6 @@ app.get('/assets', authenticateToken, async (req, res) => {
     }
 
 
-    // try {
-    //     refreshPrice();
-    //     res.status(200).json(assetsInUse);
-    // } catch (error) {
-    //     res.status(500).json({message: "Internal server error"});
-    // }
 
 })
 
@@ -163,15 +153,6 @@ app.delete('/asset/:id',authenticateToken, async (req, res) => {
     }
 
 
-
-    // try {
-    //     const resourceId = req.params.id;
-    //     delete assetsInUse[resourceId];
-    //     res.status(200).json({message: 'Resource deleted successfully'});
-    // } catch (error) {
-    //     res.status(500).json({message: "Internal server error"});
-    // }
-
 })
 
 app.post('/asset/:id', authenticateToken, async (req, res) => {
@@ -192,13 +173,6 @@ app.post('/asset/:id', authenticateToken, async (req, res) => {
         res.status(400).json({message: 'Resource not added, something went wrong.'});
     }
 
-
-    // if (allAssets.hasOwnProperty(resourceId)) { // Überprüfen, ob das Asset existiert
-    //     res.status(200).json({message: 'Resource added successfully'});
-    //     assetsInUse[resourceId] = allAssets[resourceId];
-    // } else {
-    //     res.status(400).json({message: 'Resource not added, something went wrong.'});
-    // }
 })
 
 

@@ -46,7 +46,14 @@ function addAssetAndReturnToIndexHTML(id){
         }
     })
         .then(response => {
+                if (response.status === 403) {
+                    const popup = document.getElementById('popup');
+                    popup.style.display = 'flex';
+                }
+
             if (!response.ok) {
+                const popup = document.getElementById('popup');
+                popup.style.display = 'flex';
                 throw new Error('Network response was not ok ' + response.statusText);
             }
             return response.json(); // If the response is in JSON format
@@ -114,3 +121,18 @@ function addChartForCryptoBox(chartName, date, price) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const popup = document.getElementById('popup');
+    const closeBtn = document.querySelector('.close-btn');
+
+    closeBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target == popup) {
+            popup.style.display = 'none';
+        }
+    });
+});

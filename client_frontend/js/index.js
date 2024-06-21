@@ -5,6 +5,7 @@ document.getElementById('addBoxSymbol').addEventListener('click', function () {
     location.href = 'newAsset.html'
 })
 
+
 //delete Box
 function deleteAssetBox(id) {
     document.getElementById(id).remove()
@@ -73,7 +74,8 @@ function appendAsset(asset, element, insertBefore) {
         .append(new ElementBuilder("img")
             .with("src", "assets/images/menu.png")
             .class("menuSymbol")
-            .listener("click", () => location.href = 'assetEdit.html'))
+            .listener("click", () => {
+                location.href = 'assetEdit.html'}))
         .append(new ElementBuilder("div").class("logo-Container")
             .append(new ElementBuilder("img")
                 .with("src", asset.logo)
@@ -101,33 +103,27 @@ function loadAssets() {
                 }
             }
 
-
-        })
-        .catch(error => console.error('Error fetching data:', error));
-}
-
-function loadUserAssets() {
-    fetch('/assetsUser', {
-        method: 'GET'
-    })
-        .then(response => response.json())
-        .then(data => {
-            const container = document.querySelector('.container');
-            for (const key in data) {
-                if (data.hasOwnProperty(key)) {
-                    const asset = data[key];
-                    appendAsset(asset, container, document.getElementById('addBox'))
+            const logButton = document.querySelector('.loginButton');
+            logButton.textContent = "Logout"
+            logButton.addEventListener('click', () => {
+                if (logButton.textContent === "Logout") {
+                    eraseCookie('token');
+                    logButton.textContent = "Login";
                 }
-            }
+            });
 
 
         })
         .catch(error => console.error('Error fetching data:', error));
 }
+
+function eraseCookie(name) {
+    document.cookie = name + '=; Max-Age=-99999999; path=/';
+}
+
 
 window.onload = (event) => {
     loadAssets();
-    //loadUserAssets()
 };
 
 //chart
