@@ -5,14 +5,17 @@ function appendAsset(asset, element) {
         .id(asset.id).class("box")
         .listener('click', () => {
             addAssetAndReturnToIndexHTML(asset.id);
-           })
+        })
         .append(new ElementBuilder("div").class("logo-Container")
             .append(new ElementBuilder("img")
                 .with("src", asset.logo)
                 .class("assetLogo")))
         .append(new ElementBuilder("h1").text(asset.name).class("box-text-content"))
         .append(new ElementBuilder("h2").text("€" + asset.price).class("box-text-content"))
-        .append(new ElementBuilder("canvas").id("chart" + asset.id))
+        .append(new ElementBuilder("div")
+            .class("chartInBoxes")
+            .append(new ElementBuilder("canvas")
+                .id("chart" + asset.id)))
         .appendTo(element)
 
     setTimeout(() => {
@@ -28,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
             for (const key in data) {
                 if (data.hasOwnProperty(key)) {
                     const asset = data[key];
-                    appendAsset(asset,container)
+                    appendAsset(asset, container)
                 }
             }
 
@@ -38,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 //adds the assets via the server and when finished go back to start page
-function addAssetAndReturnToIndexHTML(id){
+function addAssetAndReturnToIndexHTML(id) {
     fetch(`/asset/${id}`, {
         method: 'POST',
         headers: {
@@ -46,10 +49,10 @@ function addAssetAndReturnToIndexHTML(id){
         }
     })
         .then(response => {
-                if (response.status === 403) {
-                    const popup = document.getElementById('popup');
-                    popup.style.display = 'flex';
-                }
+            if (response.status === 403) {
+                const popup = document.getElementById('popup');
+                popup.style.display = 'flex';
+            }
 
             if (!response.ok) {
                 const popup = document.getElementById('popup');
@@ -60,7 +63,7 @@ function addAssetAndReturnToIndexHTML(id){
         })
         .then(data => {
             console.log('Success:', data);
-            location.href='index.html'
+            location.href = 'index.html'
         })
         .catch(error => {
             console.error('Error:', error);
@@ -79,7 +82,7 @@ function addChartForCryptoBox(chartName, date, price) {
     var color;
 
     //if price at the start of the array is lower at the end of the array chart is red else green
-    if (yValues[0] < yValues[(yValues.length) - 1]){
+    if (yValues[0] < yValues[(yValues.length) - 1]) {
         color = "rgb(67,150,74)"
     } else {
         color = "rgb(229,1,35)"

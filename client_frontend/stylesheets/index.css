@@ -278,9 +278,10 @@ main {
         padding: 3px; /* Angepasstes Padding für das Menü-Symbol */
     }
 
-    /*chartBTC {*/
-    /*    display: none; !* Verstecke den gesamten Container mit den Grafiken *!*/
-    /*}*/
+   .chartInBoxes{
+       display: none;
+   }
+
 }
 
 

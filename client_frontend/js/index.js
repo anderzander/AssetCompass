@@ -31,7 +31,6 @@ function deleteAssetBox(id) {
 }
 
 
-
 var element1ForSwitch = null;
 var element1OriginalId = null;
 var element2ForSwitch = null;
@@ -44,14 +43,14 @@ function appendAsset(asset, element, insertBefore) {
         .with("draggable", "true")
         .listener("dragstart", () => {
             element1OriginalId = asset.id;
-            element1ForSwitch = Object.assign({},asset);
+            element1ForSwitch = Object.assign({}, asset);
             element1ForSwitch.id = asset.id + "temp";
             console.log(asset.id.toString())
         })
         .listener("dragover", (e) => {
             e.preventDefault();
             element2OriginalId = asset.id
-            element2ForSwitch = Object.assign({},asset);
+            element2ForSwitch = Object.assign({}, asset);
             element2ForSwitch.id = asset.id + "temp"
             console.log(asset.id.toString())
         })
@@ -75,14 +74,18 @@ function appendAsset(asset, element, insertBefore) {
             .with("src", "assets/images/menu.png")
             .class("menuSymbol")
             .listener("click", () => {
-                location.href = 'assetEdit.html'}))
+                location.href = 'assetEdit.html'
+            }))
         .append(new ElementBuilder("div").class("logo-Container")
             .append(new ElementBuilder("img")
                 .with("src", asset.logo)
                 .class("assetLogo")))
         .append(new ElementBuilder("h1").text(asset.name).class("box-text-content"))
         .append(new ElementBuilder("h2").text("€" + asset.price).class("box-text-content"))
-        .append(new ElementBuilder("canvas").id("chart" + asset.id))
+        .append(new ElementBuilder("div")
+            .class("chartInBoxes")
+            .append(new ElementBuilder("canvas")
+                .id("chart" + asset.id)))
         .insertBefore(element, insertBefore)
 
     //time out is important then cart can't be loaded if the canvas DOM element doesn't exist
@@ -139,7 +142,7 @@ function addChartForCryptoBox(chartName, date, price) {
     var color;
 
     //if price at the start of the array is lower at the end of the array chart is red else green
-if (yValues[0] < yValues[(yValues.length) - 1]) {
+    if (yValues[0] < yValues[(yValues.length) - 1]) {
         color = "rgb(67,150,74)"
     } else {
         color = "rgb(229,1,35)"
@@ -180,5 +183,6 @@ if (yValues[0] < yValues[(yValues.length) - 1]) {
             }
         }
     });
+
 }
 
