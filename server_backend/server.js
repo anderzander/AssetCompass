@@ -3,8 +3,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-const { allAssets} = require('./assetModels.js');
-const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET} = require('./secretTokens.js');
+const {allAssets} = require('./assetModels.js');
+const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, authenticateToken} = require('./sassionManagement.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
 const dbName = 'userDatabase'
@@ -15,6 +15,7 @@ const fs = require('fs');
 const jwt = require("jsonwebtoken")
 const cookieParser = require('cookie-parser');
 const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.yaml'), 'utf8'));
+const {refreshPrice} = require("./remoteApi");
 
 
 //Swagger Docs
@@ -46,8 +47,7 @@ app.post("/login", async (req, res) => {
     if (user && await bcrypt.compare(userData.password, user.password)) {
 
         const accessToken = jwt.sign({name: user.email}, ACCESS_TOKEN_SECRET, {expiresIn: '30m'});
-        res.cookie("token", accessToken, {
-        })
+        res.cookie("token", accessToken, {})
         res.status(200);
         res.json({accessToken: accessToken})
     } else {
@@ -106,23 +106,10 @@ app.get('/assets', authenticateToken, async (req, res) => {
     } catch (error) {
         res.status(500).json({message: "Internal server error"});
     }
-
-
-
 })
 
-//test Endpoint with authorization
-app.get('/assetsUser', authenticateToken, (req, res) => {
-    try {
-        refreshPrice();
-        res.status(200).json(SignInTestAssets);
-    } catch (error) {
-        res.status(500).json({message: "Internal server error"});
-    }
 
-})
-
-app.get('/assets/all', function (req, res) {
+app.get('/assets/all', (req, res) => {
     try {
         refreshPrice();
         res.status(200)
@@ -134,7 +121,7 @@ app.get('/assets/all', function (req, res) {
 })
 
 
-app.delete('/asset/:id',authenticateToken, async (req, res) => {
+app.delete('/asset/:id', authenticateToken, async (req, res) => {
     const resourceId = req.params.id;
     const user = req.user
     console.log("in Post " + user.name)
@@ -175,93 +162,10 @@ app.post('/asset/:id', authenticateToken, async (req, res) => {
 
 })
 
-
-function getCryptoValue(id) {
-    const url = `https://min-api.cryptocompare.com/data/price?fsym=${id}&tsyms=EUR&api_key=db34a3799a2813ae847aa1145cdd903b1b7fc3aec63c1c1a1eec59435ca95c4c`;
-
-// Make a GET request to the URL
-    fetch(url)
-        .then(response => {
-            // Check if the response is ok (status code 200-299)
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json(); // Parse the JSON from the response
-        })
-        .then(data => {
-            // Handle the data from the response
-            allAssets[id].price = data.EUR;
-        })
-        .catch(error => {
-            // Handle any errors that occur during the fetch
-            console.error('There was a problem with the fetch operation:', error);
-        });
-}
-
-function getHistoricalDataForCrypto(id, currency, limit) {
-    const url = `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${id}&tsym=${currency}&limit=${limit}`;
-
-// Make a GET request to the URL
-    fetch(url)
-        .then(response => {
-            // Check if the response is ok (status code 200-299)
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json(); // Parse the JSON from the response
-        })
-        .then(data => {
-            // Handle the data from the response
-            let timeArray = [];
-            let valueArray = [];
-
-            data.Data.Data.forEach(item => {
-                // Zeitstempel in Datum umwandeln
-                let date = new Date(item.time * 1000);
-                let formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-                timeArray.push(formattedDate);
-
-                // "high" Wert speichern
-                valueArray.push(item.high);
-
-                allAssets[id].historicalDate = timeArray;
-                allAssets[id].historicalPrice = valueArray;
-
-            });
-        })
-        .catch(error => {
-            // Handle any errors that occur during the fetch
-            console.error('There was a problem with the fetch operation:', error);
-        });
-}
-
-function refreshPrice() {
-    Object.keys(allAssets).forEach(key => {
-        //todo es werden nur crypto assets aktualisiert, für alle anderen Assets werden die statischen price verwendet!!
-        if (allAssets[key].asset === 'crypto') {
-            getCryptoValue(key);
-            getHistoricalDataForCrypto(key, 'EUR', 30);
-        }
-    })
-}
-
-function authenticateToken(req, res, next) {
-    const token = req.cookies.token
-    if (token == null) {
-        return res.sendStatus(401);
-    }
-
-    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) {
-            console.log(err)
-        }
-        if (err) return res.sendStatus(403)
-        console.log(user.name)
-        req.user = user
-        next()
-    })
-}
-
-
 refreshPrice();
+
+
+
+
+
 
