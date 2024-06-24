@@ -30,6 +30,29 @@ function deleteAssetBox(id) {
         });
 }
 
+function switchAssetBox(arrayForSwitching) {
+
+    fetch(`/asset/switch`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(arrayForSwitching)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); // If the response is in JSON format
+        })
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
 
 var element1ForSwitch = null;
 var element1OriginalId = null;
@@ -44,27 +67,33 @@ function appendAsset(asset, element, insertBefore) {
         .listener("dragstart", () => {
             element1OriginalId = asset.id;
             element1ForSwitch = Object.assign({}, asset);
-            element1ForSwitch.id = asset.id + "temp";
+            element1ForSwitch.id = asset.id;
             console.log(asset.id.toString())
         })
         .listener("dragover", (e) => {
             e.preventDefault();
             element2OriginalId = asset.id
             element2ForSwitch = Object.assign({}, asset);
-            element2ForSwitch.id = asset.id + "temp"
+            element2ForSwitch.id = asset.id
             console.log(asset.id.toString())
         })
         .listener("drop", (e) => {
             e.preventDefault()
             console.log("drop")
-            appendAsset(element1ForSwitch, element, document.getElementById(element2OriginalId))
-            appendAsset(element2ForSwitch, element, document.getElementById(element1OriginalId))
+            const elementOld1 = document.getElementById(element1OriginalId);
+            const elementOld2 = document.getElementById(element2OriginalId);
+            elementOld1.id = "old1"
+            elementOld2.id = "old2"
 
-            document.getElementById(element1OriginalId).remove();
-            document.getElementById(element2OriginalId).remove();
+            appendAsset(element1ForSwitch,element, elementOld2)
+            appendAsset(element2ForSwitch,element, elementOld1)
 
-            //todo neue elemente haben Id + "temp" wieder auf original id zurücksetzen!!!!!!;
-            //todo element in richtiger reihenfolge Serverseitig speichern damit reihenfolge beim reload erhalten bleibt!!
+             elementOld1.remove();
+             elementOld2.remove();
+            const arrayOfTowIdsForSwitching =[]
+            arrayOfTowIdsForSwitching.push(element1OriginalId, element2OriginalId)
+            switchAssetBox(arrayOfTowIdsForSwitching)
+            console.log(arrayOfTowIdsForSwitching);
         })
         .append(new ElementBuilder("img")
             .with("src", "assets/images/X_Symbol.png")
