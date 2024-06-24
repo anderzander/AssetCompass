@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-const {allAssets, allAssetsByAdmin} = require('./assetModels.js');
+const {allAssets} = require('./assetModels.js');
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, authenticateToken} = require('./sassionManagement.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
@@ -16,7 +16,10 @@ const jwt = require("jsonwebtoken")
 const cookieParser = require('cookie-parser');
 const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.yaml'), 'utf8'));
 const {refreshPrice} = require("./remoteApi");
+const allAssetsByAdmin = null;
+const {getUserFromDB,initialiseDbFromAdmin, adminAssets}= require('./DatabaseLogic.js');
 
+const assetsForUser = initialiseDbFromAdmin();
 
 //Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -76,7 +79,6 @@ app.post("/signup", async (req, res) => {
             email: userData.email,
             password: hashedPassword,
             assets: [],
-            assetsByAdmin: [],
             admin: false
         });
 
@@ -90,16 +92,12 @@ app.post("/signup", async (req, res) => {
 
 app.get('/assets', authenticateToken, async (req, res) => {
     const eMailFromToken = req.user
-
     let assetsInUse = {};
     try {
         const userFromDb = await getUserFromDB(eMailFromToken)
         if (userFromDb.admin === false) {
             console.log("is normal user")
-            // console.log(userFromDb.assets)
-            // console.log(assetsInUse)
             userFromDb.assets.forEach(function (str) {
-                // console.log(str);
                 assetsInUse[str] = allAssets[str]
             })
             res.status(200).json(assetsInUse);
@@ -114,23 +112,31 @@ app.get('/assets', authenticateToken, async (req, res) => {
             res.status(200).json(assetsInUse);
         }
 
-
     } catch (error) {
         res.status(500).json({message: "Internal server error"});
     }
 })
 
 
-app.get('/assets/all', (req, res) => {
-    try {
-        refreshPrice();
-        res.status(200)
-        res.send(allAssets);
-    } catch (error) {
-        res.status(500).json({message: "Internal server error"});
-    }
+app.get('/assets/all', authenticateToken, async (req, res) => {
+        const eMailFromToken = req.user
+        try {
+            refreshPrice();
+            res.status(200)
+            const userFromDb = await getUserFromDB(eMailFromToken)
+            if (userFromDb.admin === false) {
+                console.log("adminAssets" + assetsForUser);
+                res.send(assetsForUser);
+            } else if (userFromDb.admin === true) {
+                res.send(allAssets);
+            }
+        } catch
+            (error) {
+            res.status(500).json({message: "Internal server error"});
+        }
 
-})
+    }
+)
 
 
 app.delete('/asset/:id', authenticateToken, async (req, res) => {
@@ -174,58 +180,8 @@ app.post('/asset/:id', authenticateToken, async (req, res) => {
 
 })
 
-async function getUserFromDB(userInfoFromToken) {
-    console.log(userInfoFromToken)
-    const client = await MongoClient.connect(mongoDbUrl);
-    const db = client.db(dbName);
-    const userFromDB = await db.collection("users")
-        .findOne({email: userInfoFromToken.name})
-    console.log(userFromDB)
-    return userFromDB;
-}
-
-app.put('/asset/switch', authenticateToken, async (req, res) => {
-    const arrayForSwitching = req.body;
-    const user = req.user
-    console.log("in Post " + user.name)
-
-
-    try {
-        const client = await MongoClient.connect(mongoDbUrl);
-        const db = client.db(dbName);
-        const userFromDb = await db.collection("users")
-            .findOne({email: user.name})
-
-        const userArray = userFromDb.assets;
-
-        swapElements(userArray, arrayForSwitching[0], arrayForSwitching[1])
-        await db.collection("users").updateOne(
-            {email: user.name}, // Filter criteria to find the document
-            {$set: {assets: userArray}} //
-        );
-        res.status(200).json({message: 'Resource switched successfully'});
-    } catch (error) {
-        res.status(400).json({message: 'Resource not added, something went wrong.'});
-    }
-
-})
-
-function swapElements(array, element1, element2) {
-    // Find the indices of the elements
-    const index1 = array.indexOf(element1);
-    const index2 = array.indexOf(element2);
-
-    // Check if both elements exist in the array
-    if (index1 === -1 || index2 === -1) {
-        console.log('One or both elements not found in the array.');
-        return;
-    }
-
-    // Swap the elements
-    [array[index1], array[index2]] = [array[index2], array[index1]];
-}
-
 refreshPrice();
+
 
 
 
