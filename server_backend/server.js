@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-const {allAssets} = require('./assetModels.js');
+const {allAssets, allAssetsByAdmin} = require('./assetModels.js');
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, authenticateToken} = require('./sassionManagement.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
@@ -75,7 +75,9 @@ app.post("/signup", async (req, res) => {
             name: userData.name,
             email: userData.email,
             password: hashedPassword,
-            assets: []
+            assets: [],
+            assetsByAdmin: [],
+            admin: false
         });
 
         res.status(201).json({message: "User created successfully"});
@@ -87,22 +89,31 @@ app.post("/signup", async (req, res) => {
 
 
 app.get('/assets', authenticateToken, async (req, res) => {
-    const user = req.user
+    const eMailFromToken = req.user
 
     let assetsInUse = {};
     try {
-        const client = await MongoClient.connect(mongoDbUrl);
-        const db = client.db(dbName);
-        const userFromDb = await db.collection("users")
-            .findOne({email: user.name})
+        const userFromDb = await getUserFromDB(eMailFromToken)
+        if (userFromDb.admin === false) {
+            console.log("is normal user")
+            // console.log(userFromDb.assets)
+            // console.log(assetsInUse)
+            userFromDb.assets.forEach(function (str) {
+                // console.log(str);
+                assetsInUse[str] = allAssets[str]
+            })
+            res.status(200).json(assetsInUse);
+        } else if (userFromDb.admin === true) {
+            console.log("is admin")
+            // console.log(userFromDb.assets)
+            // console.log(assetsInUse)
+            userFromDb.assets.forEach(function (str) {
+                // console.log(str);
+                assetsInUse[str] = allAssets[str]
+            })
+            res.status(200).json(assetsInUse);
+        }
 
-        console.log(userFromDb.assets)
-        console.log(assetsInUse)
-        userFromDb.assets.forEach(function (str) {
-            console.log(str);
-            assetsInUse[str] = allAssets[str]
-        })
-        res.status(200).json(assetsInUse);
     } catch (error) {
         res.status(500).json({message: "Internal server error"});
     }
@@ -161,6 +172,16 @@ app.post('/asset/:id', authenticateToken, async (req, res) => {
     }
 
 })
+
+async function getUserFromDB(userInfoFromToken) {
+    console.log(userInfoFromToken)
+    const client = await MongoClient.connect(mongoDbUrl);
+    const db = client.db(dbName);
+    const userFromDB = await db.collection("users")
+        .findOne({email: userInfoFromToken.name})
+    console.log(userFromDB)
+    return userFromDB;
+}
 
 refreshPrice();
 
