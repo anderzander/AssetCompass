@@ -1,6 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 const bcrypt = require('bcrypt');
-let {allAssets,adminAssets} = require("./assetModels");
+let {allAssets, adminAssets} = require("./assetModels");
 const mongoDbUrl = "mongodb://localhost:27017/";
 const dbName = 'userDatabase';
 adminAssets = null;
@@ -64,4 +64,5 @@ async function initialiseDbFromAdmin() {
 function getAdminAssets() {
     return adminAssets;
 }
+
 module.exports = {getUserFromDB, initialiseDbFromAdmin, getAdminAssets};

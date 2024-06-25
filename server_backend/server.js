@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-let {allAssets,adminAssets} = require('./assetModels.js');
+let {allAssets, adminAssets} = require('./assetModels.js');
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, authenticateToken} = require('./sassionManagement.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
@@ -18,7 +18,6 @@ const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.
 const {refreshPrice} = require("./remoteApi");
 const {getUserFromDB, initialiseDbFromAdmin, getAdminAssets} = require('./DatabaseLogic.js');
 let assetsForUser = null;
-
 
 
 //Swagger Docs
@@ -117,10 +116,10 @@ app.get('/assets', authenticateToken, async (req, res) => {
 
 
 app.get('/assets/all', authenticateToken, async (req, res) => {
-    assetsForUser = await initialiseDbFromAdmin();
+        assetsForUser = await initialiseDbFromAdmin();
         const eMailFromToken = req.user
         console.log("assets all reached")
-    console.log(adminAssets)
+        console.log(adminAssets)
         try {
             refreshPrice();
             res.status(200)
@@ -192,6 +191,48 @@ app.post('/asset/:id', authenticateToken, async (req, res) => {
         res.status(400).json({message: 'Resource not added, something went wrong.'});
     }
 })
+
+app.put('/asset/switch', authenticateToken, async (req, res) => {
+    const arrayForSwitching = req.body;
+    const user = req.user
+    console.log("in Post " + user.name)
+
+
+    try {
+        const client = await MongoClient.connect(mongoDbUrl);
+        const db = client.db(dbName);
+        const userFromDb = await db.collection("users")
+            .findOne({email: user.name})
+
+        const userArray = userFromDb.assets;
+
+        swapElements(userArray, arrayForSwitching[0], arrayForSwitching[1])
+        await db.collection("users").updateOne(
+            {email: user.name}, // Filter criteria to find the document
+            {$set: {assets: userArray}} //
+        );
+        res.status(200).json({message: 'Resource switched successfully'});
+    } catch (error) {
+        res.status(400).json({message: 'Resource not added, something went wrong.'});
+    }
+
+})
+
+function swapElements(array, element1, element2) {
+    // Find the indices of the elements
+    const index1 = array.indexOf(element1);
+    const index2 = array.indexOf(element2);
+
+    // Check if both elements exist in the array
+    if (index1 === -1 || index2 === -1) {
+        console.log('One or both elements not found in the array.');
+        return;
+    }
+
+    // Swap the elements
+    [array[index1], array[index2]] = [array[index2], array[index1]];
+}
+
 
 refreshPrice();
 
