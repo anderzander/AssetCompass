@@ -1,3 +1,5 @@
+let adminAssets = {};
+
 let allAssets = {
     BTC: {
         id: 'BTC',
@@ -96,4 +98,4 @@ let allAssets = {
 };
 
 
-module.exports = {allAssets};
+module.exports = {allAssets,adminAssets};

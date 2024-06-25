@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-const {allAssets} = require('./assetModels.js');
+let {allAssets,adminAssets} = require('./assetModels.js');
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, authenticateToken} = require('./sassionManagement.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
@@ -17,17 +17,8 @@ const cookieParser = require('cookie-parser');
 const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.yaml'), 'utf8'));
 const {refreshPrice} = require("./remoteApi");
 const {getUserFromDB, initialiseDbFromAdmin, getAdminAssets} = require('./DatabaseLogic.js');
-let allAssetsForUser = allAssets;
 let assetsForUser = null;
 
-// Initialisieren Sie die DB und warten Sie auf die Auflösung
-(async () => {
-    assetsForUser = await initialiseDbFromAdmin();
-    allAssetsForUser = JSON.stringify(getAdminAssets());
-    // console.log("adminAssets in server.js ", getAdminAssets());
-    // console.log("allAssetsForUser in server.js " + allAssetsForUser);
-    // console.log("allAssetsForUser as string in server.js " +  JSON.stringify(allAssetsForUser));
-})();
 
 
 //Swagger Docs
@@ -126,25 +117,17 @@ app.get('/assets', authenticateToken, async (req, res) => {
 
 
 app.get('/assets/all', authenticateToken, async (req, res) => {
+    assetsForUser = await initialiseDbFromAdmin();
         const eMailFromToken = req.user
         console.log("assets all reached")
+    console.log(adminAssets)
         try {
             refreshPrice();
             res.status(200)
             const userFromDb = await getUserFromDB(eMailFromToken)
             if (userFromDb.admin === false) {
-                const userAssetsObjects = null;
-                console.log("allAssetsForUser string in asset/all :" + allAssetsForUser)
-                console.log("allAssets string in asset/all :" + allAssets)
-
-                allAssetsForUser.forEach(key => {
-                    if (allAssets[key]) {
-                        userAssetsObjects[key] = allAssets[key];
-                    }
-                });
-
-                console.log("userAssetsObjects from /assets/all :" + userAssetsObjects);
-                res.send(userAssetsObjects);
+                const stringifyedAssetsForUser = JSON.stringify(assetsForUser)
+                res.send(stringifyedAssetsForUser);
 
             } else if (userFromDb.admin === true) {
                 res.send(allAssets);
@@ -197,7 +180,6 @@ app.post('/asset/:id', authenticateToken, async (req, res) => {
     const user = req.user
     console.log("in Post " + user.name)
 
-
     try {
         const client = await MongoClient.connect(mongoDbUrl);
         const db = client.db(dbName);
@@ -209,7 +191,6 @@ app.post('/asset/:id', authenticateToken, async (req, res) => {
     } catch (error) {
         res.status(400).json({message: 'Resource not added, something went wrong.'});
     }
-
 })
 
 refreshPrice();

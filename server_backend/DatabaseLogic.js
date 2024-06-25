@@ -1,9 +1,9 @@
 const MongoClient = require('mongodb').MongoClient;
 const bcrypt = require('bcrypt');
-const {allAssets} = require("./assetModels");
+let {allAssets,adminAssets} = require("./assetModels");
 const mongoDbUrl = "mongodb://localhost:27017/";
 const dbName = 'userDatabase';
-let adminAssets = null;
+adminAssets = null;
 
 
 async function getUserFromDB(userInfoFromToken) {
@@ -51,7 +51,14 @@ async function initialiseDbFromAdmin() {
     // console.log("Admin Assets: ", adminAssets);
     // console.log("Admin User: ", adminUser);
     console.log("DB initialised from admin ", adminAssets);
-    return adminAssets
+    let newAdminAssets = {};
+    adminAssets.forEach(key => {
+        if (allAssets[key]) {
+            newAdminAssets[key] = allAssets[key];
+        }
+    });
+    console.log("DB initialised from admin ", newAdminAssets);
+    return newAdminAssets
 }
 
 function getAdminAssets() {
