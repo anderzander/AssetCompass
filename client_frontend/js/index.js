@@ -123,13 +123,29 @@ function appendAsset(asset, element, insertBefore) {
     }, 500);
 }
 
+function appendNews(article, element) {
+    new ElementBuilder("div")
+        .class('newsBox')
+        .append(new ElementBuilder("div").class("newsPicContainer")
+            .append(new ElementBuilder("img").class("newsPic")
+                .with("src", article.image)))
+        .append(new ElementBuilder("h4").text(article.title).class("h4ForNews"))
+        .append(new ElementBuilder("p").text(article.description).class("descriptionForNews"))
+        .append(new ElementBuilder("a").text("Link to article").href(article.url))
+        .appendTo(element)
+}
+
 function loadAssets() {
     fetch('/assets')
         .then(response =>{
-            if (response.status === 401 || response.status === 403){
+            if (response.status === 401 || response.status === 403) {
+                console.log("in if statment loadAssets")
                 loadNews()
             }
-            response.json()})
+            if (response.status === 200){
+                return response.json()
+            }
+            })
         .then(data => {
             const container = document.querySelector('.container');
             for (const key in data) {
@@ -161,7 +177,13 @@ function loadNews(){
     fetch('/assets/news')
         .then(response => response.json())
         .then(data => {
-            console.log(JSON.stringify(data))
+            const container = document.querySelector('.container');
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const article = data[key];
+                    appendNews(article, container)
+                }
+            }
 
 
         })
