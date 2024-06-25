@@ -8,21 +8,26 @@ document.getElementById('addBoxSymbol').addEventListener('click', function () {
             'Content-Type': 'application/json',
             // 'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1")
         }
+
     })
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 401 || response.status === 403) {
+                location.href = 'newAsset.html';
+            }
+            return response.json()
+        })
         .then(data => {
             if (data.admin) {
                 location.href = 'admin.html';
             } else {
                 location.href = 'newAsset.html';
             }
+
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while checking user status.');
         });
 });
-
 
 
 //delete Box
@@ -104,12 +109,12 @@ function appendAsset(asset, element, insertBefore) {
             elementOld1.id = "old1"
             elementOld2.id = "old2"
 
-            appendAsset(element1ForSwitch,element, elementOld2)
-            appendAsset(element2ForSwitch,element, elementOld1)
+            appendAsset(element1ForSwitch, element, elementOld2)
+            appendAsset(element2ForSwitch, element, elementOld1)
 
-             elementOld1.remove();
-             elementOld2.remove();
-            const arrayOfTowIdsForSwitching =[]
+            elementOld1.remove();
+            elementOld2.remove();
+            const arrayOfTowIdsForSwitching = []
             arrayOfTowIdsForSwitching.push(element1OriginalId, element2OriginalId)
             switchAssetBox(arrayOfTowIdsForSwitching)
             console.log(arrayOfTowIdsForSwitching);
@@ -157,15 +162,15 @@ function appendNews(article, element) {
 function loadAssets() {
     console.log("loading assets in index.js(line127)")
     fetch('/assets')
-        .then(response =>{
+        .then(response => {
             if (response.status === 401 || response.status === 403) {
                 console.log("in if statment loadAssets")
                 loadNews()
             }
-            if (response.status === 200){
+            if (response.status === 200) {
                 return response.json()
             }
-            })
+        })
         .then(data => {
             const container = document.querySelector('.container');
             for (const key in data) {
@@ -193,7 +198,7 @@ function eraseCookie(name) {
     document.cookie = name + '=; Max-Age=-99999999; path=/';
 }
 
-function loadNews(){
+function loadNews() {
     fetch('/assets/news')
         .then(response => response.json())
         .then(data => {

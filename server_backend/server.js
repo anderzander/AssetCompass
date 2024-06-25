@@ -19,7 +19,6 @@ const {refreshPrice} = require("./remoteApi");
 const {getUserFromDB, initialiseDbFromAdmin, getAdminAssets} = require('./DatabaseLogic.js');
 let assetsForUser = null;
 
-
 //Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -252,7 +251,6 @@ app.get('/user/status', authenticateToken, async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
 
 refreshPrice();
 
