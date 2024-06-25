@@ -92,13 +92,18 @@ app.post("/signup", async (req, res) => {
 app.get('/assets', authenticateToken, async (req, res) => {
     const eMailFromToken = req.user
     let assetsInUse = {};
+    const adminEmail = "admin@admin";
+    let adminUser = await getUserFromDB({name: adminEmail});
 
     try {
         const userFromDb = await getUserFromDB(eMailFromToken)
         if (userFromDb.admin === false) {
             console.log("/assets as normal user")
             userFromDb.assets.forEach(function (str) {
-                assetsInUse[str] = allAssets[str]
+                if (adminUser.assets.includes(str)){
+                    assetsInUse[str] = allAssets[str]
+                }
+
             })
             res.status(200).json(assetsInUse);
         } else if (userFromDb.admin === true) {

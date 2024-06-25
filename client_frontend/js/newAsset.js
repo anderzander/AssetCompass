@@ -2,11 +2,9 @@ import {ElementBuilder, addChartForCryptoBox, setUserNameAndToggleLoginButton} f
 
 
 function appendAsset(asset, element) {
-    new ElementBuilder("div")
+    const mainDiv = new ElementBuilder("div")
+    mainDiv
         .id(asset.id).class("box")
-        .listener('click', () => {
-            addAssetAndReturnToIndexHTML(asset.id);
-        })
         .append(new ElementBuilder("div").class("logo-Container")
             .append(new ElementBuilder("img")
                 .with("src", asset.logo)
@@ -18,6 +16,14 @@ function appendAsset(asset, element) {
             .append(new ElementBuilder("canvas")
                 .id("chart" + asset.id)))
         .appendTo(element)
+
+    const arrayAssetsAlreadyInUse = sessionStorage.getItem("userArray")
+
+    if (arrayAssetsAlreadyInUse.includes(asset.id)){
+        mainDiv.element.style.backgroundColor = "rgba(255,255,255,0.1)";
+    } else {mainDiv.listener('click', () => {
+        addAssetAndReturnToIndexHTML(asset.id);
+    })}
 
     setTimeout(() => {
         addChartForCryptoBox("chart" + asset.id, asset.historicalDate, asset.historicalPrice);

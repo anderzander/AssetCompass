@@ -23,7 +23,7 @@ function appendAsset(asset, element) {
         .appendTo(element);
 
     const arrayAssetsAlreadyInUse = sessionStorage.getItem("userArray")
-    console.log(arrayAssetsAlreadyInUse);
+
     if (arrayAssetsAlreadyInUse.includes(asset.id)){
         mainDiv.element.style.backgroundColor = "green";
     }
