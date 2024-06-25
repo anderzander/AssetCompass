@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-const {allAssets, allAssetsByAdmin, allArticles} = require('./assetModels.js');
+let {allAssets, adminAssets} = require('./assetModels.js');
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, authenticateToken} = require('./sassionManagement.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
@@ -16,6 +16,8 @@ const jwt = require("jsonwebtoken")
 const cookieParser = require('cookie-parser');
 const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.yaml'), 'utf8'));
 const {refreshPrice} = require("./remoteApi");
+const {getUserFromDB, initialiseDbFromAdmin, getAdminAssets} = require('./DatabaseLogic.js');
+let assetsForUser = null;
 
 
 //Swagger Docs
@@ -76,7 +78,6 @@ app.post("/signup", async (req, res) => {
             email: userData.email,
             password: hashedPassword,
             assets: [],
-            assetsByAdmin: [],
             admin: false
         });
 
@@ -90,7 +91,6 @@ app.post("/signup", async (req, res) => {
 
 app.get('/assets', authenticateToken, async (req, res) => {
     const eMailFromToken = req.user
-
     let assetsInUse = {};
     try {
         const userFromDb = await getUserFromDB(eMailFromToken)
@@ -99,68 +99,75 @@ app.get('/assets', authenticateToken, async (req, res) => {
             // console.log(userFromDb.assets)
             // console.log(assetsInUse)
             userFromDb.assets.forEach(function (str) {
-                // console.log(str);
                 assetsInUse[str] = allAssets[str]
             })
             res.status(200).json(assetsInUse);
         } else if (userFromDb.admin === true) {
-            console.log("is admin")
-            // console.log(userFromDb.assets)
-            // console.log(assetsInUse)
+            console.log("/assets as admin")
             userFromDb.assets.forEach(function (str) {
-                // console.log(str);
                 assetsInUse[str] = allAssets[str]
             })
             res.status(200).json(assetsInUse);
         }
 
-
     } catch (error) {
         res.status(500).json({message: "Internal server error"});
     }
 })
 
 
-app.get('/assets/all', (req, res) => {
-    try {
-        refreshPrice();
-        res.status(200)
-        res.send(allAssets);
-    } catch (error) {
-        res.status(500).json({message: "Internal server error"});
+app.get('/assets/all', authenticateToken, async (req, res) => {
+        assetsForUser = await initialiseDbFromAdmin();
+        const eMailFromToken = req.user
+        console.log("assets all reached")
+        console.log(adminAssets)
+        try {
+            refreshPrice();
+            res.status(200)
+            const userFromDb = await getUserFromDB(eMailFromToken)
+            if (userFromDb.admin === false) {
+                const stringifyedAssetsForUser = JSON.stringify(assetsForUser)
+                res.send(stringifyedAssetsForUser);
+
+            } else if (userFromDb.admin === true) {
+                res.send(allAssets);
+            }
+
+        } catch
+            (error) {
+            res.status(500).json({message: "Internal server error test"});
+        }
     }
-
-})
-
-app.get('/assets/news', (req, res) => {
-    try {
-
-        console.log("in Assets news")
-        console.log(JSON.stringify(allArticles))
-        console.log(allArticles)
-        res.status(200)
-        res.send(JSON.stringify(allArticles))
-    } catch (error) {
-        res.status(500).json({message: "Internal server error"});
-    }
-
-})
+)
 
 
 app.delete('/asset/:id', authenticateToken, async (req, res) => {
     const resourceId = req.params.id;
-    const user = req.user
-    console.log("in Post " + user.name)
+    const eMailFromToken = req.user
+    console.log("entering delete as : " + eMailFromToken.name)
 
 
     try {
-        const client = await MongoClient.connect(mongoDbUrl);
-        const db = client.db(dbName);
-        await db.collection("users").updateOne(
-            {email: user.name}, // Filter criteria to find the document
-            {$pull: {assets: resourceId}} // Update operation using $addToSet without duplicates
-        );
-        res.status(200).json({message: 'Resource removed successfully'});
+        const userFromDb = await getUserFromDB(eMailFromToken)
+        if (userFromDb.admin === false) {
+            const client = await MongoClient.connect(mongoDbUrl);
+            const db = client.db(dbName);
+            await db.collection("users").updateOne(
+                {email: userFromDb.email}, // Filter criteria to find the document
+                {$pull: {assets: resourceId}} // Update operation using $addToSet without duplicates
+            );
+            console.log("deleted as normal user")
+            res.status(200).json({message: 'Resource removed successfully by user'});
+        } else if (userFromDb.admin === true) {
+            const client = await MongoClient.connect(mongoDbUrl);
+            const db = client.db(dbName);
+            await db.collection("users").updateOne(
+                {email: userFromDb.email}, // Filter criteria to find the document
+                {$pull: {assets: resourceId}} // Update operation using $addToSet without duplicates
+            );
+            console.log("deleted as admin user")
+            res.status(200).json({message: 'Resource removed successfully by admin'});
+        }
     } catch (error) {
         res.status(400).json({message: 'Resource not added, something went wrong.'});
     }
@@ -185,18 +192,7 @@ app.post('/asset/:id', authenticateToken, async (req, res) => {
     } catch (error) {
         res.status(400).json({message: 'Resource not added, something went wrong.'});
     }
-
 })
-
-async function getUserFromDB(userInfoFromToken) {
-    console.log(userInfoFromToken)
-    const client = await MongoClient.connect(mongoDbUrl);
-    const db = client.db(dbName);
-    const userFromDB = await db.collection("users")
-        .findOne({email: userInfoFromToken.name})
-    console.log(userFromDB)
-    return userFromDB;
-}
 
 app.put('/asset/switch', authenticateToken, async (req, res) => {
     const arrayForSwitching = req.body;
@@ -238,9 +234,6 @@ function swapElements(array, element1, element2) {
     // Swap the elements
     [array[index1], array[index2]] = [array[index2], array[index1]];
 }
-
-
-
 
 refreshPrice();
 

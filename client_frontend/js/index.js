@@ -136,6 +136,7 @@ function appendNews(article, element) {
 }
 
 function loadAssets() {
+    console.log("loading assets in index.js(line127)")
     fetch('/assets')
         .then(response =>{
             if (response.status === 401 || response.status === 403) {
@@ -192,6 +193,7 @@ function loadNews(){
 
 
 window.onload = (event) => {
+    console.log("loading assets in index.js(line158)")
     loadAssets();
 };
 
