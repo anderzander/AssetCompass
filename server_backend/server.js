@@ -222,10 +222,6 @@ app.put('/asset/switch', authenticateToken, async (req, res) => {
 
 app.get('/assets/news', (req, res) => {
     try {
-
-        console.log("in Assets news")
-        console.log(JSON.stringify(allArticles))
-        console.log(allArticles)
         res.status(200)
         res.send(JSON.stringify(allArticles))
     } catch (error) {
