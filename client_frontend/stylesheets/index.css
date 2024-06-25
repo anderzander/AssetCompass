@@ -29,7 +29,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding:10px 20px;
+    padding: 10px 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.0);
     z-index: 1000;
     box-sizing: border-box;
@@ -39,6 +39,7 @@ header {
     flex: 1; /* Ensures the main content takes up available space */
     overflow-y: auto; /* Falls der Inhalt scrollbar ist */
 }
+
 .header-content {
     display: flex;
     align-items: center;
@@ -75,7 +76,6 @@ main {
 }
 
 
-
 .box {
     width: 300px; /* Festlegen der Breite der Boxen */
     height: 300px; /* Festlegen der Höhe der Boxen */
@@ -85,6 +85,7 @@ main {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     flex-direction: column;
 }
+
 .newsBox {
     width: 300px; /* Festlegen der Breite der Boxen */
     height: 300px; /* Festlegen der Höhe der Boxen */
@@ -124,12 +125,12 @@ main {
 }
 
 
-.add_symbol_image{
+.add_symbol_image {
     width: 150px;
     height: 150px;
 }
 
-.add_symbol_image:hover{
+.add_symbol_image:hover {
     transform: scale(1.1);
 }
 
@@ -141,13 +142,13 @@ main {
     justify-content: center; /* Zentriert die Boxen horizontal */
 }
 
-.login-button-container{
+.login-button-container {
     display: flex;
     justify-content: flex-end; /* Korrigiert von 'right' zu 'flex-end' */
     align-content: center;
 }
 
-.loginButton{
+.loginButton {
     padding: 5px;
     font-size: 1vw;
     background-color: #355C7D;
@@ -157,25 +158,25 @@ main {
     cursor: pointer;
 }
 
-.removeSymbol{
+.removeSymbol {
     float: right;
     width: 20px;
     height: 20px;
     padding: 10px 10px 10px 5px;
 }
 
-.removeSymbol:hover{
+.removeSymbol:hover {
     transform: scale(1.1);
 }
 
-.menuSymbol{
+.menuSymbol {
     float: right;
     width: 25px;
     height: 25px;
     padding: 7px 2px;
 }
 
-.menuSymbol:hover{
+.menuSymbol:hover {
     transform: scale(1.1);
 }
 
@@ -224,7 +225,7 @@ a:hover {
     text-decoration: underline;
 }
 
-.logo-Container{
+.logo-Container {
     width: 50px;
     height: 50px;
     justify-content: center;
@@ -232,13 +233,13 @@ a:hover {
     padding: 10px;
 }
 
-.assetLogo{
+.assetLogo {
     width: 100%;
     hight: 100%;
     float: left;
 }
 
-.box-text-content{
+.box-text-content {
     color: #333;
     justify-content: center;
     align-content: center;
@@ -246,6 +247,7 @@ a:hover {
     margin: 0;
     padding: 5px;
 }
+
 .popup {
     display: none;
     position: fixed;
@@ -275,7 +277,43 @@ a:hover {
     cursor: pointer;
 }
 
+.userName {
+    margin: 5px;
+    display: flex;
+}
 
+.adminContainer {
+    margin: 20px;
+    padding: 20px;
+    background-color: #555555;
+    border-radius: 10px;
+}
+
+.adminAsset {
+    margin: 5px;
+    padding-right: 20px;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    display: flex;
+    align-items: center; /* Vertical centering */
+}
+
+.adminAddButton {
+
+    margin-left: auto;
+    width: 100px;
+    height: 25px;
+}
+
+.assetInfo {
+    margin: 5px;
+
+}
+
+.adminReturnButton{
+    margin: 10px;
+    height: 50px;
+}
 
 
 @media only screen and (max-width: 768px) {
@@ -308,7 +346,7 @@ a:hover {
     }
 
 
-    .logo-Container{
+    .logo-Container {
         width: 50px;
         height: 50px;
         justify-content: left;
@@ -321,23 +359,24 @@ a:hover {
         height: auto; /* Automatische Höhe beibehalten */
     }
 
-    .removeSymbol{
+    .removeSymbol {
         float: right;
         width: 8px;
         height: 8px;
         padding: 3px; /* Angepasstes Padding für das Entfernungs-Symbol */
     }
 
-    .menuSymbol{
+    .menuSymbol {
         float: right;
         width: 10px;
         height: 10px;
         padding: 3px; /* Angepasstes Padding für das Menü-Symbol */
     }
 
-   .chartInBoxes{
-       display: none;
-   }
+    .chartInBoxes {
+        display: none;
+    }
+
     .newsBox {
         width: 140px;
         height: 140px;
@@ -371,7 +410,8 @@ a:hover {
         margin-top: 5px;
         margin-left: 5px;
     }
-    .linkUrl{
+
+    .linkUrl {
         text-decoration: none;
         font-size: 8px;
         margin-top: 5px;

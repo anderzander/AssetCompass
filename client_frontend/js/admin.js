@@ -2,29 +2,36 @@ import {ElementBuilder, addChartForCryptoBox, setUserNameAndToggleLoginButton} f
 
 
 function appendAsset(asset, element) {
-    new ElementBuilder("div")
-        .id(asset.id).class("box")
-        .listener('click', () => {
-            addAssetAndReturnToIndexHTML(asset.id);
-        })
+    const mainDiv = new ElementBuilder("div")
+
+    mainDiv
+        .class("adminAsset")
         .append(new ElementBuilder("div").class("logo-Container")
             .append(new ElementBuilder("img")
                 .with("src", asset.logo)
                 .class("assetLogo")))
-        .append(new ElementBuilder("h1").text(asset.name).class("box-text-content"))
-        .append(new ElementBuilder("h2").text("€" + asset.price).class("box-text-content"))
-        .append(new ElementBuilder("div")
-            .class("chartInBoxes")
-            .append(new ElementBuilder("canvas")
-                .id("chart" + asset.id)))
-        .appendTo(element)
+        .append(new ElementBuilder("p").text("ID: " + asset.id).class("assetInfo"))
+        .append(new ElementBuilder("p").text("NAME: " + asset.name).class("assetInfo"))
+        .append(new ElementBuilder("p").text("TYP: " + asset.asset).class("assetInfo"))
+        .append(new ElementBuilder("p").text("PRICE: " + asset.price).class("assetInfo"))
+        .append(new ElementBuilder("button")
+            .text("ADD")
+            .class("adminAddButton").listener('click', function () {
+                addAssetForUser(asset.id);
+                mainDiv.element.style.backgroundColor = "green";
+            }))
+        .appendTo(element);
 
-    setTimeout(() => {
-        addChartForCryptoBox("chart" + asset.id, asset.historicalDate, asset.historicalPrice);
-    }, 500);
+    const arrayAssetsAlreadyInUse = sessionStorage.getItem("userArray")
+    console.log(arrayAssetsAlreadyInUse);
+    if (arrayAssetsAlreadyInUse.includes(asset.id)){
+        mainDiv.element.style.backgroundColor = "green";
+    }
+
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    const assetsAlreadyInUse = null;
     fetch('/assets/all')
         .then(response => {
             if (response.status === 401) { //if no user then login
@@ -34,7 +41,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         })
         .then(data => {
-            const container = document.querySelector('.container');
+
+            const container = document.querySelector('.adminContainer');
             for (const key in data) {
                 if (data.hasOwnProperty(key)) {
                     const asset = data[key];
@@ -47,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 //adds the assets via the server and when finished go back to start page
-function addAssetAndReturnToIndexHTML(id) {
+function addAssetForUser(id) {
     fetch(`/asset/${id}`, {
         method: 'POST',
         headers: {
@@ -69,7 +77,6 @@ function addAssetAndReturnToIndexHTML(id) {
         })
         .then(data => {
             console.log('Success:', data);
-            location.href = 'index.html'
         })
         .catch(error => {
             console.error('Error:', error);
@@ -78,5 +85,5 @@ function addAssetAndReturnToIndexHTML(id) {
 
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    setUserNameAndToggleLoginButton()
+    setUserNameAndToggleLoginButton();
 });

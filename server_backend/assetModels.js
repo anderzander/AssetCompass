@@ -93,10 +93,25 @@ let allAssets = {
         name: 'Gold',
         price: null,
         logo:'https://cdn.sanity.io/images/kts928pd/production/06da1c47bb4afede58d667f60a36c12d57308764-731x731.png'
+    },
+    USDC:{
+        id: 'USDC',
+        asset: 'crypto',
+        name: 'USDC',
+        logo: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png?1696506694'
+    },
+    STETH:{
+        id: 'STETH',
+        asset: 'crypto',
+        name: 'Lido Staked Ether',
+        logo: 'https://assets.coingecko.com/coins/images/13442/standard/steth_logo.png?1696513206'
+    },
+    TRX:{
+        id: 'TRX',
+        asset: 'crypto',
+        name: 'TRON',
+        logo: 'https://assets.coingecko.com/coins/images/1094/standard/tron-logo.png?1696502193'
     }
-
-
-
 
 };
 

@@ -1,4 +1,6 @@
-import {ElementBuilder, ParentChildBuilder} from './builders.js';
+import {ElementBuilder, ParentChildBuilder, addChartForCryptoBox, setUserNameAndToggleLoginButton} from './builders.js';
+
+
 
 
 document.getElementById('addBoxSymbol').addEventListener('click', function () {
@@ -180,23 +182,12 @@ function loadAssets() {
                 }
             }
 
-            const logButton = document.querySelector('.loginButton');
-            logButton.textContent = "Logout"
-            logButton.addEventListener('click', () => {
-                if (logButton.textContent === "Logout") {
-                    eraseCookie('token');
-                    logButton.textContent = "Login";
-                }
-            });
-
 
         })
         .catch(error => console.error('Error fetching data:', error));
 }
 
-function eraseCookie(name) {
-    document.cookie = name + '=; Max-Age=-99999999; path=/';
-}
+
 
 function loadNews() {
     fetch('/assets/news')
@@ -217,64 +208,12 @@ function loadNews() {
 
 
 window.onload = (event) => {
-    console.log("loading assets in index.js(line158)")
     loadAssets();
+    setUserNameAndToggleLoginButton()
+
 };
 
-//chart
-function addChartForCryptoBox(chartName, date, price) {
 
-    if (!Array.isArray(date) || !Array.isArray(price) || date.length === 0 || price.length === 0) {
-        console.error("Date or price array is not defined or empty: " + chartName);
-        return;
-    }
 
-    const xValues = date;
-    const yValues = price;
-    var color;
 
-    //if price at the start of the array is lower at the end of the array chart is red else green
-    if (yValues[0] < yValues[(yValues.length) - 1]) {
-        color = "rgb(67,150,74)"
-    } else {
-        color = "rgb(229,1,35)"
-    }
-
-    new Chart(document.getElementById(chartName).getContext('2d'), {
-        type: "line",
-        data: {
-            labels: xValues,
-            datasets: [{
-                fill: false,
-                lineTension: 0,
-                backgroundColor: color,
-                borderColor: color,
-                data: yValues,
-                pointRadius: 2
-            }]
-        },
-        options: {
-            legend: {display: false},
-            scales: {
-                xAxes: [{
-                    gridLines: {display: false},
-                    ticks: {display: false}
-                }],
-                yAxes: [{
-                    ticks: {display: false},
-                    gridLines: {display: false}
-                }]
-            },
-            layout: {
-                padding: {
-                    left: 8,
-                    right: 20,
-                    bottom: 20,
-                    top: 20
-                }
-            }
-        }
-    });
-
-}
 
