@@ -22,6 +22,10 @@ export class ElementBuilder {
         this.element.setAttribute(name, value);
         return this;
     }
+    href(url) {
+        this.element.href = url;
+        return this;
+    }
 
     listener(name, listener) {
         this.element.addEventListener(name, listener);
