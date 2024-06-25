@@ -88,15 +88,10 @@ function financeNews() {
             return response.json();
         })
         .then(data => {
-
-            //console.log("in finance news" + JSON.stringify(allArticles))
-
             data.articles.forEach((article, index) => {
                 // Use the index or any unique identifier as the key
                 allArticles[`article${index + 1}`] = article;
             });
-
-
         })
         .catch(error => {
             console.error('Error fetching finance news:', error);

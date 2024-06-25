@@ -280,9 +280,9 @@ a:hover {
 
 @media only screen and (max-width: 768px) {
     .box {
-        width: 100px; /* Reduziere die Breite der Boxen */
-        height: 100px; /* Reduziere die Höhe der Boxen */
-        padding: 3px; /* Reduziere den Innenabstand der Boxen */
+        width: 100px;
+        height: 100px;
+        padding: 3px;
     }
 
     .box h1,
@@ -297,14 +297,14 @@ a:hover {
     }
 
     .addBox {
-        width: 100px;
-        height: 100px;
+        width: 140px;
+        height: 140px;
         padding: 3px;
     }
 
     .add_symbol_image {
-        width: 70px; /* Neue Breite für das Hinzufügen-Symbol */
-        height: 70px; /* Neue Höhe für das Hinzufügen-Symbol */
+        width: 70px;
+        height: 70px;
     }
 
 
@@ -338,7 +338,45 @@ a:hover {
    .chartInBoxes{
        display: none;
    }
+    .newsBox {
+        width: 140px;
+        height: 140px;
+        padding: 3px;
+    }
 
+    .newsPicContainer {
+        width: 50px;
+        height: 50px;
+        justify-content: left;
+        align-content: center;
+        padding: 1px;
+    }
+
+    .newsPic {
+        margin-top: 5px;
+        width: 100%;
+        height: auto;
+        max-height: 100%;
+    }
+
+    .h4ForNews {
+        text-align: center;
+        margin: 5px 0;
+        font-size: 10px;
+    }
+
+    .descriptionForNews {
+        text-decoration: none;
+        font-size: 8px;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
+    .linkUrl{
+        text-decoration: none;
+        font-size: 8px;
+        margin-top: 5px;
+        margin-left: 5px;
+    }
 
 }
 

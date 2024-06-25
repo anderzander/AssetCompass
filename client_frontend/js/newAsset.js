@@ -1,24 +1,6 @@
 import {ElementBuilder} from "./builders.js";
 
 
-
-/*
-function appendNewsBox(title, description, element) {
-    new ElementBuilder("div")
-        .class("box")
-        .append(new ElementBuilder("h1").text(title).class("title"))
-        .append(new ElementBuilder("p").text(description).class("description"))
-        .appendTo(element);
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    const container = document.querySelector('.container');
-    appendNewsBox("Mein Titel", "Das ist eine einfache Beschreibung.", container);
-});
-*/
-
-
-
 function appendAsset(asset, element) {
     new ElementBuilder("div")
         .id(asset.id).class("box")
