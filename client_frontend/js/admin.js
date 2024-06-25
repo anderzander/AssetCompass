@@ -6,10 +6,11 @@ function appendAsset(asset, element) {
 
     mainDiv
         .class("adminAsset")
-        .append(new ElementBuilder("div").class("logo-Container")
+        .append(new ElementBuilder("div").class("adminLogoContainer").append(new ElementBuilder("div").class("logo-Container")
             .append(new ElementBuilder("img")
                 .with("src", asset.logo)
-                .class("assetLogo")))
+                .class("assetLogo"))))
+
         .append(new ElementBuilder("p").text("ID: " + asset.id).class("assetInfo"))
         .append(new ElementBuilder("p").text("NAME: " + asset.name).class("assetInfo"))
         .append(new ElementBuilder("p").text("TYP: " + asset.asset).class("assetInfo"))

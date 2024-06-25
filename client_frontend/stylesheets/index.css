@@ -418,6 +418,10 @@ a:hover {
         margin-left: 5px;
     }
 
+    .adminLogoContainer{
+        display: none;
+    }
+
 }
 
 
