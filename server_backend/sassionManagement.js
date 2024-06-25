@@ -5,21 +5,21 @@ REFRESH_TOKEN_SECRET = "9355a325a38e0b51a41d918599b2959a1b8493aaba9fd0dccee6245f
 
 
 function authenticateToken(req, res, next) {
-    console.log("token is being autenticated...")
+    // console.log("token is being autenticated...")
     const token = req.cookies.token
     if (token == null) {
-        console.log("no token found")
+        // console.log("no token found")
         return res.sendStatus(401);
     }
 
     jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
-        console.log("verify token is executed")
+        // console.log("verify token is executed")
         if (err) {
             console.log(err)
             console.log("error while verifing token")
             return res.sendStatus(403)
         }
-        console.log("token verified")
+        // console.log("token verified")
         console.log(user.name)
         req.user = user
         next()
