@@ -155,7 +155,7 @@ function appendNews(article, element) {
                 .with("src", article.image)))
         .append(new ElementBuilder("h4").text(article.title).class("h4ForNews"))
         .append(new ElementBuilder("p").text(article.description).class("descriptionForNews"))
-        .append(new ElementBuilder("a").text("Link to article").href(article.url))
+        .append(new ElementBuilder("a").text("Link to article").href(article.url).class("linkUrl"))
         .appendTo(element)
 }
 

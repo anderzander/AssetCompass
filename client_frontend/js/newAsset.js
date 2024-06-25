@@ -1,5 +1,6 @@
 import {ElementBuilder} from "./builders.js";
 
+
 function appendAsset(asset, element) {
     new ElementBuilder("div")
         .id(asset.id).class("box")

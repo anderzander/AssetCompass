@@ -1,6 +1,7 @@
 let {allAssets, allAssetsByAdmin, allArticles} = require("./assetModels");
 
 function getHistoricalDataForCrypto(id, currency, limit) {
+
     const url = `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${id}&tsym=${currency}&limit=${limit}`;
 
 // Make a GET request to the URL
@@ -88,15 +89,10 @@ function financeNews() {
             return response.json();
         })
         .then(data => {
-
-            //console.log("in finance news" + JSON.stringify(allArticles))
-
             data.articles.forEach((article, index) => {
                 // Use the index or any unique identifier as the key
                 allArticles[`article${index + 1}`] = article;
             });
-
-
         })
         .catch(error => {
             console.error('Error fetching finance news:', error);

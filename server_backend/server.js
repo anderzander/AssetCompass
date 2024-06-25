@@ -17,6 +17,7 @@ const cookieParser = require('cookie-parser');
 const swaggerDocument = YAML.load(fs.readFileSync(path.join(__dirname, 'swagger.yaml'), 'utf8'));
 const {refreshPrice} = require("./remoteApi");
 const {getUserFromDB, initialiseDbFromAdmin, getAdminAssets} = require('./DatabaseLogic.js');
+
 let assetsForUser = null;
 
 //Swagger Docs
