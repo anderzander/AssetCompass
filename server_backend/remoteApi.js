@@ -77,7 +77,7 @@ function getGoldPrice(){
         })
 }
 function financeNews() {
-    const apiKey = '293f8b2e80f57f6b50115b87dced13df';
+    const apiKey = '1e6b48ba1dd4648eacc3f0d48f56421f';
     const url = `https://gnews.io/api/v4/top-headlines?category=business&lang=en&country=us&max=10&apikey=${apiKey}`;
     let articles = null;
     fetch(url)
@@ -115,6 +115,5 @@ function refreshPrice() {
             getHistoricalDataForCrypto(key, 'EUR', 30);
         }
     })
-
 }
 module.exports =  {getHistoricalDataForCrypto, getCryptoValue,refreshPrice};

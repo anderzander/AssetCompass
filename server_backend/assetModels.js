@@ -95,7 +95,7 @@ let allAssets = {
         logo:'https://cdn.sanity.io/images/kts928pd/production/06da1c47bb4afede58d667f60a36c12d57308764-731x731.png'
     }
 
-};
+
 
 
 };
@@ -103,4 +103,4 @@ let allAssets = {
 let allArticles = {};
 
 
-module.exports = {allAssets,allAssetsByAdmin, allArticles};
+module.exports = {allAssets,adminAssets, allArticles};

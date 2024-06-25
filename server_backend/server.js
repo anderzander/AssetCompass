@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-let {allAssets, adminAssets} = require('./assetModels.js');
+let {allAssets, adminAssets, allArticles} = require('./assetModels.js');
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, authenticateToken} = require('./sassionManagement.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
@@ -216,6 +216,20 @@ app.put('/asset/switch', authenticateToken, async (req, res) => {
         res.status(200).json({message: 'Resource switched successfully'});
     } catch (error) {
         res.status(400).json({message: 'Resource not added, something went wrong.'});
+    }
+
+})
+
+app.get('/assets/news', (req, res) => {
+    try {
+
+        console.log("in Assets news")
+        console.log(JSON.stringify(allArticles))
+        console.log(allArticles)
+        res.status(200)
+        res.send(JSON.stringify(allArticles))
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
     }
 
 })
