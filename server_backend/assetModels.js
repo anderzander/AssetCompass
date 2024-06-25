@@ -91,7 +91,9 @@ let allAssets = {
         name: 'Gold',
         price: null,
         logo:'https://cdn.sanity.io/images/kts928pd/production/06da1c47bb4afede58d667f60a36c12d57308764-731x731.png'
-    }
+    },
+
+
 
 };
 
@@ -185,4 +187,7 @@ let allAssetsByAdmin = {
 
 };
 
-module.exports = {allAssets,allAssetsByAdmin};
+let allArticles = {};
+
+
+module.exports = {allAssets,allAssetsByAdmin, allArticles};

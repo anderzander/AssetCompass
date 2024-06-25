@@ -125,7 +125,11 @@ function appendAsset(asset, element, insertBefore) {
 
 function loadAssets() {
     fetch('/assets')
-        .then(response => response.json())
+        .then(response =>{
+            if (response.status === 401 || response.status === 403){
+                loadNews()
+            }
+            response.json()})
         .then(data => {
             const container = document.querySelector('.container');
             for (const key in data) {
@@ -151,6 +155,17 @@ function loadAssets() {
 
 function eraseCookie(name) {
     document.cookie = name + '=; Max-Age=-99999999; path=/';
+}
+
+function loadNews(){
+    fetch('/assets/news')
+        .then(response => response.json())
+        .then(data => {
+            console.log(JSON.stringify(data))
+
+
+        })
+        .catch(error => console.error('Error fetching data:', error));
 }
 
 

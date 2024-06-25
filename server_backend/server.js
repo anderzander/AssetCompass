@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const {all} = require("express/lib/application");
 const app = express();
-const {allAssets, allAssetsByAdmin} = require('./assetModels.js');
+const {allAssets, allAssetsByAdmin, allArticles} = require('./assetModels.js');
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, authenticateToken} = require('./sassionManagement.js');
 const MongoClient = require('mongodb').MongoClient
 const mongoDbUrl = "mongodb://localhost:27017/";
@@ -132,6 +132,20 @@ app.get('/assets/all', (req, res) => {
 
 })
 
+app.get('/assets/news', (req, res) => {
+    try {
+
+        console.log("in Assets news")
+        console.log(JSON.stringify(allArticles))
+        console.log(allArticles)
+        res.status(200)
+        res.send(JSON.stringify(allArticles))
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
+    }
+
+})
+
 
 app.delete('/asset/:id', authenticateToken, async (req, res) => {
     const resourceId = req.params.id;
@@ -224,6 +238,9 @@ function swapElements(array, element1, element2) {
     // Swap the elements
     [array[index1], array[index2]] = [array[index2], array[index1]];
 }
+
+
+
 
 refreshPrice();
 

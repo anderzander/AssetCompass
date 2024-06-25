@@ -1,4 +1,4 @@
-const {allAssets} = require("./assetModels");
+let {allAssets, allAssetsByAdmin, allArticles} = require("./assetModels");
 
 function getHistoricalDataForCrypto(id, currency, limit) {
     const url = `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${id}&tsym=${currency}&limit=${limit}`;
@@ -75,18 +75,46 @@ function getGoldPrice(){
         .catch(error=> {
             console.error('There was a problem with the fetch operation:', error);
         })
+}
+function financeNews() {
+    const apiKey = '293f8b2e80f57f6b50115b87dced13df';
+    const url = `https://gnews.io/api/v4/top-headlines?category=business&lang=en&country=us&max=10&apikey=${apiKey}`;
+    let articles = null;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
 
+            //console.log("in finance news" + JSON.stringify(allArticles))
+
+            data.articles.forEach((article, index) => {
+                // Use the index or any unique identifier as the key
+                allArticles[`article${index + 1}`] = article;
+            });
+
+
+        })
+        .catch(error => {
+            console.error('Error fetching finance news:', error);
+        });
 }
 
 function refreshPrice() {
     getGoldPrice()
+    financeNews()
+
     Object.keys(allAssets).forEach(key => {
+
         //todo es werden nur crypto assets aktualisiert, für alle anderen Assets werden die statischen price verwendet!!
         if (allAssets[key].asset === 'crypto') {
             getCryptoValue(key);
             getHistoricalDataForCrypto(key, 'EUR', 30);
         }
     })
-}
 
-module.exports =  {getHistoricalDataForCrypto, getCryptoValue, refreshPrice}
+}
+module.exports =  {getHistoricalDataForCrypto, getCryptoValue,refreshPrice};
