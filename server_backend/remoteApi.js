@@ -58,8 +58,28 @@ function getCryptoValue(id) {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
+function getGoldPrice(){
+    const url ='https://api.gold-api.com/price/XAU';
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const id = "GOLD";
+        allAssets[id].price = parseFloat(data.price).toFixed(2);
+
+        })
+        .catch(error=> {
+            console.error('There was a problem with the fetch operation:', error);
+        })
+
+}
 
 function refreshPrice() {
+    getGoldPrice()
     Object.keys(allAssets).forEach(key => {
         //todo es werden nur crypto assets aktualisiert, für alle anderen Assets werden die statischen price verwendet!!
         if (allAssets[key].asset === 'crypto') {

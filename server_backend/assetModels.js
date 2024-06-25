@@ -84,6 +84,13 @@ let allAssets = {
         name: 'Amazon',
         price: '161.02',
         logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg'
+    },
+    GOLD:{
+        id: 'GOLD',
+        asset: 'metal',
+        name: 'Gold',
+        price: null,
+        logo:'https://cdn.sanity.io/images/kts928pd/production/06da1c47bb4afede58d667f60a36c12d57308764-731x731.png'
     }
 
 };
