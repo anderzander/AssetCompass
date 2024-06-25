@@ -1,6 +1,7 @@
 let {allAssets, allAssetsByAdmin, allArticles} = require("./assetModels");
 
 function getHistoricalDataForCrypto(id, currency, limit) {
+
     const url = `https://min-api.cryptocompare.com/data/v2/histoday?fsym=${id}&tsym=${currency}&limit=${limit}`;
 
 // Make a GET request to the URL
