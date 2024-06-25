@@ -129,7 +129,8 @@ app.get('/assets/all', authenticateToken, async (req, res) => {
                 res.send(stringifyedAssetsForUser);
 
             } else if (userFromDb.admin === true) {
-                res.send(allAssets);
+                res.redirect('/client_frontend/admin.html');
+                // res.send(allAssets);
             }
 
         } catch
@@ -232,6 +233,16 @@ function swapElements(array, element1, element2) {
     // Swap the elements
     [array[index1], array[index2]] = [array[index2], array[index1]];
 }
+
+app.get('/user/status', authenticateToken, async (req, res) => {
+    try {
+        const eMailFromToken = req.user;
+        const userFromDb = await getUserFromDB(eMailFromToken);
+        res.json({ admin: userFromDb.admin });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
 
 
 refreshPrice();

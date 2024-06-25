@@ -2,8 +2,27 @@ import {ElementBuilder, ParentChildBuilder} from './builders.js';
 
 
 document.getElementById('addBoxSymbol').addEventListener('click', function () {
-    location.href = 'newAsset.html'
-})
+    fetch('/user/status', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': 'Bearer ' + document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.admin) {
+                location.href = 'admin.html';
+            } else {
+                location.href = 'newAsset.html';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while checking user status.');
+        });
+});
+
 
 
 //delete Box
