@@ -4,6 +4,8 @@ const {allAssets} = require("./assetModels");
 const mongoDbUrl = "mongodb://localhost:27017/";
 const dbName = 'userDatabase';
 let adminAssets = null;
+
+
 async function getUserFromDB(userInfoFromToken) {
     console.log("Fetching user from DB:", userInfoFromToken);
     const client = await MongoClient.connect(mongoDbUrl, {useUnifiedTopology: true});
@@ -45,10 +47,14 @@ async function initialiseDbFromAdmin() {
         throw new Error("Failed to create or fetch admin user.");
     }
 
-  adminAssets = adminUser.assets;
-    console.log("Admin Assets: ", adminAssets);
-    console.log("Admin User: ", adminUser);
+    adminAssets = adminUser.assets;
+    // console.log("Admin Assets: ", adminAssets);
+    // console.log("Admin User: ", adminUser);
+    console.log("DB initialised from admin ", adminAssets);
     return adminAssets
 }
 
-module.exports = {getUserFromDB, initialiseDbFromAdmin,adminAssets};
+function getAdminAssets() {
+    return adminAssets;
+}
+module.exports = {getUserFromDB, initialiseDbFromAdmin, getAdminAssets};

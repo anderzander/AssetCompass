@@ -25,7 +25,13 @@ function appendAsset(asset, element) {
 
 document.addEventListener('DOMContentLoaded', function () {
     fetch('/assets/all')
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 401) { //if no user then login
+                window.location.href = '/login.html';
+            } else {
+                return response.json();
+            }
+        })
         .then(data => {
             const container = document.querySelector('.container');
             for (const key in data) {
@@ -34,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     appendAsset(asset, container)
                 }
             }
-
 
         })
         .catch(error => console.error('Error fetching data:', error));

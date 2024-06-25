@@ -124,6 +124,7 @@ function appendAsset(asset, element, insertBefore) {
 }
 
 function loadAssets() {
+    console.log("loading assets in index.js(line127)")
     fetch('/assets')
         .then(response => response.json())
         .then(data => {
@@ -155,6 +156,7 @@ function eraseCookie(name) {
 
 
 window.onload = (event) => {
+    console.log("loading assets in index.js(line158)")
     loadAssets();
 };
 
