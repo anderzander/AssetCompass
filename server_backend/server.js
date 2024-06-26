@@ -252,6 +252,7 @@ app.get('/user/status', authenticateToken, async (req, res) => {
     try {
         const eMailFromToken = req.user;
         const userFromDb = await getUserFromDB(eMailFromToken);
+        userFromDb.password = null;
         res.json(userFromDb);
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
