@@ -84,7 +84,7 @@ export class ParentChildBuilder extends ElementBuilder {
 export function addChartForCryptoBox(chartName, date, price) {
 
     if (!Array.isArray(date) || !Array.isArray(price) || date.length === 0 || price.length === 0) {
-        console.error("Date or price array is not defined or empty: " + chartName);
+        // console.error("Date or price array is not defined or empty: " + chartName);
         return;
     }
 

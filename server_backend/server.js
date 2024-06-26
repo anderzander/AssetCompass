@@ -257,7 +257,7 @@ app.get('/user/status', authenticateToken, async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
-
+initialiseDbFromAdmin();
 refreshPrice();
 
 
